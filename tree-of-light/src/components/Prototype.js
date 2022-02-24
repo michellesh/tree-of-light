@@ -3,20 +3,32 @@ import styled from 'styled-components';
 import * as d3 from 'd3';
 
 import { useCanvas } from 'hooks';
-import { radians } from 'utils';
+import { pointOnEllipse, pointOnLine, radians } from 'utils';
 
-const WIDTH = 1000;
-const HEIGHT = 1000;
+const WIDTH = 1050;
+const HEIGHT = 1050;
 const BACKGROUND_COLOR = 'white';
-const ELLIPSE_RATIO = 0.5;
-const ELLIPSE_MAX_WIDTH = 300;
-const DISTANCE_BETWEEN_LEVELS = 100;
+const ELLIPSE_RATIO = 0.5; // ratio of width/height for each ellipse
+const ELLIPSE_MAX_WIDTH = 300; // width of widest ellipse on top in px
+const DISTANCE_BETWEEN_DISCS = 100; // space between each disc in px
+const NUM_STRIPS_PER_DISC = 16; // number of LED strips in each disc
+const TOP_OFFSET = 160; // number of pixels offset from top of canvas
 
 // Stick lengths are as follows (in ft).
 // They should all start at the edge of a 24" diameter circle
 // (meaning the lowest layer is 8' total diameter: 3+2+3).
-const stickLengths = [12, 10.875, 9.75, 8.625, 7.5, 6.375, 5.25, 4.125, 3];
-const widthScale = ELLIPSE_MAX_WIDTH / d3.max(stickLengths);
+const STICK_LENGTHS_FT = [12, 10.875, 9.75, 8.625, 7.5, 6.375, 5.25, 4.125, 3];
+const NUM_LEDS_PER_FT = 5; // This is wrong, but just for testing
+const INNER_RING_RADIUS_FT = 1;
+
+const ftToPx = d3
+  .scaleLinear()
+  .domain([0, d3.max(STICK_LENGTHS_FT)])
+  .range([0, ELLIPSE_MAX_WIDTH]);
+
+const STICK_LENGTHS_PX = STICK_LENGTHS_FT.map(ftToPx);
+const NUM_LEDS_PER_PX = ftToPx(NUM_LEDS_PER_FT);
+const INNER_RING_RADIUS_PX = ftToPx(INNER_RING_RADIUS_FT);
 
 const Canvas = styled.canvas`
   border: 1px solid black;
@@ -50,21 +62,71 @@ const Ellipse = config => {
   });
 };
 
-const ELLIPSES = stickLengths.map((stickLength, level) =>
-  Ellipse({
-    x: WIDTH / 2,
-    y: ELLIPSE_MAX_WIDTH * ELLIPSE_RATIO + DISTANCE_BETWEEN_LEVELS * level,
-    rx: stickLength * widthScale,
-    ry: stickLength * widthScale * ELLIPSE_RATIO
-  })
-);
+const LED = config => {
+  const defaults = {
+    color: 'black',
+    endAngle: 2 * Math.PI,
+    radius: 2,
+    startAngle: 0
+  };
+  const _led = { ...defaults, ...config };
+  return Object.freeze({
+    ..._led,
+    color: color => LED({ ..._led, color }),
+    r: _led.radius,
+    radius: radius => LED({ ..._led, radius }),
+    resetColor: () => LED({ ..._led, color: defaults.color }),
+    resetRadius: () => LED({ ..._led, radius: defaults.radius }),
+    draw: context => {
+      const { x, y, color, radius, startAngle, endAngle } = _led;
+      context.beginPath();
+      context.arc(x, y, radius, startAngle, endAngle);
+      context.fillStyle = color;
+      context.fill();
+    }
+  });
+};
+
+const LEDs = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
+  // Center point of disc
+  const x = WIDTH / 2;
+  const y = TOP_OFFSET + DISTANCE_BETWEEN_DISCS * i;
+
+  // Outer ellipse
+  const outerEllipse = Ellipse({
+    x,
+    y,
+    rx: INNER_RING_RADIUS_PX / 2 + stickLengthPx,
+    ry: (INNER_RING_RADIUS_PX / 2 + stickLengthPx) * ELLIPSE_RATIO
+  });
+
+  // Inner ellipse
+  const innerEllipse = Ellipse({
+    x,
+    y,
+    rx: INNER_RING_RADIUS_PX,
+    ry: INNER_RING_RADIUS_PX * ELLIPSE_RATIO
+  });
+
+  const numLEDsPerStrip = stickLengthPx * NUM_LEDS_PER_PX;
+  const degreeStep = 360 / NUM_STRIPS_PER_DISC;
+  const leds = d3.range(NUM_STRIPS_PER_DISC).map(stripNumber => {
+    //d3.range(NUM_LEDS_PER_PX).map(LED(x, y))
+    return LED(pointOnEllipse(outerEllipse, radians(stripNumber * degreeStep)));
+  });
+  return { outerEllipse, innerEllipse, leds };
+});
 
 const Prototype = () => {
   const [canvasRef, context] = useCanvas();
 
   useEffect(() => {
     if (context) {
-      ELLIPSES.forEach(ellipse => ellipse.draw(context));
+      LEDs.forEach(disc => {
+        disc.outerEllipse.draw(context);
+        disc.innerEllipse.draw(context);
+        disc.leds.forEach(led => led.draw(context));
+      });
     }
   }, [context]);
 
