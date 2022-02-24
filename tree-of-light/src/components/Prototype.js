@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import * as d3 from 'd3';
 
+import { BACKGROUND_COLOR } from 'const';
 import * as animations from 'animations';
 import { useCanvas } from 'hooks';
 import { pointOnEllipse, pointOnLine, radians } from 'utils';
@@ -10,7 +11,6 @@ window.d3 = d3;
 
 const WIDTH = 1050;
 const HEIGHT = 1050;
-const BACKGROUND_COLOR = 'white';
 const ELLIPSE_RATIO = 0.5; // ratio of width/height for each ellipse
 const ELLIPSE_MAX_WIDTH = 300; // width of widest ellipse on top in px
 const DISTANCE_BETWEEN_DISCS = 100; // space between each disc in px
@@ -34,11 +34,6 @@ const STICK_LENGTHS_PX = STICK_LENGTHS_FT.map(ftToPx);
 const NUM_LEDS_PER_PX = NUM_LEDS_PER_FT / ftToPx(1);
 const INNER_RING_RADIUS_PX = ftToPx(INNER_RING_RADIUS_FT);
 
-const Canvas = styled.canvas`
-  border: 1px solid black;
-  background-color: ${BACKGROUND_COLOR};
-`;
-
 const Container = styled.div`
   background-color: ${BACKGROUND_COLOR};
   height: 100%;
@@ -58,7 +53,7 @@ const Ellipse = config => {
       const { x, y, rx, ry, rotation, startAngle, endAngle } = _ellipse;
       context.beginPath();
       context.ellipse(x, y, rx, ry, rotation, startAngle, endAngle);
-      context.fillStyle = 'white';
+      context.fillStyle = BACKGROUND_COLOR;
       context.fill();
       context.strokeStyle = 'black';
       context.stroke();
@@ -70,7 +65,7 @@ const LED = config => {
   const defaults = {
     color: 'black',
     endAngle: 2 * Math.PI,
-    radius: 2,
+    radius: 1,
     startAngle: 0
   };
   const _led = { ...defaults, ...config };
@@ -81,6 +76,8 @@ const LED = config => {
     radius: radius => LED({ ..._led, radius }),
     resetColor: () => LED({ ..._led, color: defaults.color }),
     resetRadius: () => LED({ ..._led, radius: defaults.radius }),
+    on: (color = 'white') => LED({ ..._led, radius: 3, color }),
+    off: () => LED({ ..._led, radius: defaults.radius, color: defaults.color }),
     draw: context => {
       const { x, y, color, radius, startAngle, endAngle } = _led;
       context.beginPath();
@@ -155,7 +152,7 @@ const Prototype = () => {
 
   return (
     <Container>
-      <Canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
+      <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
     </Container>
   );
 };

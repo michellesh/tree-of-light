@@ -14,10 +14,10 @@ export const explode = (context, DISCS) => {
     DISCS.forEach(disc => {
       disc.leds.forEach(ledStrip => {
         if (ledIndex < ledStrip.length) {
-          ledStrip[ledIndex] = ledStrip[ledIndex].radius(3);
+          ledStrip[ledIndex] = ledStrip[ledIndex].on();
         }
         if (ledIndex > 0 && ledIndex - 1 < ledStrip.length) {
-          ledStrip[ledIndex - 1] = ledStrip[ledIndex - 1].radius(1);
+          ledStrip[ledIndex - 1] = ledStrip[ledIndex - 1].off();
         }
       });
     });
