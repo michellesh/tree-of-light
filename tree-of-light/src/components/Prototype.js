@@ -146,7 +146,7 @@ const Prototype = () => {
       });
 
       // Animate
-      animations.explode(context, DISCS);
+      animations.juggle(context, DISCS);
     }
   }, [context]);
 

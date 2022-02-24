@@ -12,3 +12,4 @@ export const showLEDs = (context, DISCS) => {
 };
 
 export * from './explode';
+export * from './juggle';
