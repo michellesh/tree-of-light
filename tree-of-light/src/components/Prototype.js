@@ -123,6 +123,11 @@ const LEDs = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
   return { outerEllipse, innerEllipse, ledStrips };
 });
 
+console.log(
+  'Total LED count:',
+  LEDs.reduce((acc, disc) => acc + disc.ledStrips.flatMap(x => x).length, 0)
+);
+
 const Prototype = () => {
   const [canvasRef, context] = useCanvas();
 
