@@ -1,8 +1,8 @@
 import { clearCanvas } from 'utils';
 
-export const showLEDs = (context, DISCS) => {
+export const showLEDs = (context, discs) => {
   clearCanvas(context);
-  DISCS.forEach(disc => {
+  discs.forEach(disc => {
     disc.outerEllipse.draw(context);
     disc.innerEllipse.draw(context);
     disc.leds.forEach(ledStrip =>
@@ -11,5 +11,5 @@ export const showLEDs = (context, DISCS) => {
   })
 };
 
-export * from './explode';
+export * from './ripple';
 export * from './juggle';

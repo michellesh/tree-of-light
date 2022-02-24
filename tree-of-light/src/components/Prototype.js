@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import * as d3 from 'd3';
 
 import { BACKGROUND_COLOR } from 'const';
 import * as animations from 'animations';
 import { useCanvas } from 'hooks';
-import { pointOnEllipse, pointOnLine, radians } from 'utils';
+import { clearCanvas, pointOnEllipse, pointOnLine, radians } from 'utils';
 
 window.d3 = d3;
 
@@ -53,8 +53,6 @@ const Ellipse = config => {
       const { x, y, rx, ry, rotation, startAngle, endAngle } = _ellipse;
       context.beginPath();
       context.ellipse(x, y, rx, ry, rotation, startAngle, endAngle);
-      context.fillStyle = BACKGROUND_COLOR;
-      context.fill();
       context.strokeStyle = 'black';
       context.stroke();
     }
@@ -131,27 +129,33 @@ console.log(
 );
 console.log('DISCS', DISCS);
 
+const animationList = ['Ripple', 'Juggle', 'Stop'];
+
 const Prototype = () => {
   const [canvasRef, context] = useCanvas();
+  const [animation, setAnimation] = useState(0);
 
   useEffect(() => {
-    if (context) {
-      // Draw the discs and LED dots
-      DISCS.forEach(disc => {
-        disc.outerEllipse.draw(context);
-        disc.innerEllipse.draw(context);
-        disc.leds.forEach(ledStrip =>
-          ledStrip.forEach(led => led.draw(context))
-        );
-      });
-
-      // Animate
-      animations.juggle(context, DISCS);
+    if (window.reqId) {
+      window.cancelAnimationFrame(window.reqId);
     }
-  }, [context]);
+    if (context) {
+      switch (animation) {
+        case 'Ripple':
+          animations.ripple(context, DISCS);
+          break;
+        case 'Juggle':
+          animations.juggle(context, DISCS);
+          break;
+      }
+    }
+  }, [animation, context]);
 
   return (
     <Container>
+      {animationList.map(a => (
+        <button onClick={() => setAnimation(a)}>{a}</button>
+      ))}
       <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
     </Container>
   );

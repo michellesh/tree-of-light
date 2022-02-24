@@ -1,10 +1,10 @@
 import { clearCanvas } from 'utils';
 import { showLEDs } from 'animations';
 
-export const juggle = (context, DISCS) => {
+export const juggle = (context, discs) => {
   clearCanvas(context);
 
-  let discStates = DISCS.map(d => ({
+  let discStates = discs.map(d => ({
     prevIndex: 0,
     index: 1,
     outward: true,
@@ -12,7 +12,7 @@ export const juggle = (context, DISCS) => {
   }));
 
   const _juggle = () => {
-    DISCS.forEach((disc, i) => {
+    discs.forEach((disc, i) => {
       const state = discStates[i];
       disc.leds.forEach(ledStrip => {
         ledStrip[state.index] = ledStrip[state.index].on();
@@ -35,9 +35,9 @@ export const juggle = (context, DISCS) => {
         }
       }
     });
-    showLEDs(context, DISCS);
-    window.requestAnimationFrame(_juggle);
+    showLEDs(context, discs);
+    window.reqId = window.requestAnimationFrame(_juggle);
   };
 
-  window.requestAnimationFrame(_juggle);
+  window.reqId = window.requestAnimationFrame(_juggle);
 };

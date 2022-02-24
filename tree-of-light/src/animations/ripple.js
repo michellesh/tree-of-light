@@ -1,17 +1,17 @@
 import { clearCanvas } from 'utils';
 import { showLEDs } from 'animations';
 
-export const explode = (context, DISCS) => {
+export const ripple = (context, discs) => {
   clearCanvas(context);
 
-  const maxStrandLength = DISCS.reduce(
+  const maxStrandLength = discs.reduce(
     (acc, disc) => (disc.leds[0].length > acc ? disc.leds[0].length : acc),
     0
   );
   let ledIndex = 0;
 
-  const _explode = () => {
-    DISCS.forEach(disc => {
+  const _ripple = () => {
+    discs.forEach(disc => {
       disc.leds.forEach(ledStrip => {
         if (ledIndex < ledStrip.length) {
           ledStrip[ledIndex] = ledStrip[ledIndex].on();
@@ -21,10 +21,10 @@ export const explode = (context, DISCS) => {
         }
       });
     });
-    showLEDs(context, DISCS);
+    showLEDs(context, discs);
     ledIndex = ledIndex === maxStrandLength ? 0 : ledIndex + 1;
-    window.requestAnimationFrame(_explode);
+    window.reqId = window.requestAnimationFrame(_ripple);
   };
 
-  window.requestAnimationFrame(_explode);
+  window.reqId = window.requestAnimationFrame(_ripple);
 };
