@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import * as d3 from 'd3';
 
+import * as animations from 'animations';
 import { useCanvas } from 'hooks';
 import { pointOnEllipse, pointOnLine, radians } from 'utils';
 
@@ -14,6 +15,7 @@ const ELLIPSE_RATIO = 0.5; // ratio of width/height for each ellipse
 const ELLIPSE_MAX_WIDTH = 300; // width of widest ellipse on top in px
 const DISTANCE_BETWEEN_DISCS = 100; // space between each disc in px
 const NUM_STRIPS_PER_DISC = 16; // number of LED strips in each disc
+const DEGREES_BETWEEN_STRIPS = 360 / NUM_STRIPS_PER_DISC;
 const TOP_OFFSET = 160; // number of pixels offset from top of canvas
 
 // Stick lengths are as follows (in ft).
@@ -89,7 +91,7 @@ const LED = config => {
   });
 };
 
-const LEDs = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
+const DISCS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
   // Center point of disc
   const x = WIDTH / 2;
   const y = TOP_OFFSET + DISTANCE_BETWEEN_DISCS * i;
@@ -111,35 +113,43 @@ const LEDs = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
   });
 
   const numLEDsInStrip = stickLengthPx * NUM_LEDS_PER_PX;
-  const degreeStep = 360 / NUM_STRIPS_PER_DISC;
-  const ledStrips = d3.range(NUM_STRIPS_PER_DISC).map(stripNumber => {
-    const r = radians(stripNumber * degreeStep) + radians(degreeStep / 2);
-    const stripStart = pointOnEllipse(innerEllipse, r);
-    const stripEnd = pointOnEllipse(outerEllipse, r);
+
+  const leds = d3.range(NUM_STRIPS_PER_DISC).map(stripNumber => {
+    const r =
+      radians(stripNumber * DEGREES_BETWEEN_STRIPS) +
+      radians(DEGREES_BETWEEN_STRIPS / 2);
+    const stripStart = pointOnEllipse(outerEllipse, r);
+    const stripEnd = pointOnEllipse(innerEllipse, r);
     return d3
       .range(0, 1, 1 / numLEDsInStrip)
       .map(howFar => LED(pointOnLine(stripEnd, stripStart, howFar)));
   });
-  return { outerEllipse, innerEllipse, ledStrips };
+
+  return { outerEllipse, innerEllipse, leds };
 });
 
 console.log(
   'Total LED count:',
-  LEDs.reduce((acc, disc) => acc + disc.ledStrips.flatMap(x => x).length, 0)
+  DISCS.reduce((acc, disc) => acc + disc.leds.flatMap(x => x).length, 0)
 );
+console.log('DISCS', DISCS);
 
 const Prototype = () => {
   const [canvasRef, context] = useCanvas();
 
   useEffect(() => {
     if (context) {
-      LEDs.forEach(disc => {
+      // Draw the discs and LED dots
+      DISCS.forEach(disc => {
         disc.outerEllipse.draw(context);
         disc.innerEllipse.draw(context);
-        disc.ledStrips.forEach(ledStrip =>
+        disc.leds.forEach(ledStrip =>
           ledStrip.forEach(led => led.draw(context))
         );
       });
+
+      // Animate
+      animations.explode(context, DISCS);
     }
   }, [context]);
 

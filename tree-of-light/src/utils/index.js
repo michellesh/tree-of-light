@@ -19,3 +19,5 @@ export const pointOnEllipse = (ellipse, angleRadians) => ({
     ellipse.rx * Math.cos(angleRadians) * Math.sin(ellipse.rotation) +
     ellipse.ry * Math.sin(angleRadians) * Math.cos(ellipse.rotation)
 });
+
+export * from './canvas';
