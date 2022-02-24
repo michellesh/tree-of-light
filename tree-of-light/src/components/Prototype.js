@@ -5,6 +5,8 @@ import * as d3 from 'd3';
 import { useCanvas } from 'hooks';
 import { pointOnEllipse, pointOnLine, radians } from 'utils';
 
+window.d3 = d3;
+
 const WIDTH = 1050;
 const HEIGHT = 1050;
 const BACKGROUND_COLOR = 'white';
@@ -18,7 +20,7 @@ const TOP_OFFSET = 160; // number of pixels offset from top of canvas
 // They should all start at the edge of a 24" diameter circle
 // (meaning the lowest layer is 8' total diameter: 3+2+3).
 const STICK_LENGTHS_FT = [12, 10.875, 9.75, 8.625, 7.5, 6.375, 5.25, 4.125, 3];
-const NUM_LEDS_PER_FT = 5; // This is wrong, but just for testing
+const NUM_LEDS_PER_FT = 3; // This is wrong, but just for testing
 const INNER_RING_RADIUS_FT = 1;
 
 const ftToPx = d3
@@ -27,7 +29,7 @@ const ftToPx = d3
   .range([0, ELLIPSE_MAX_WIDTH]);
 
 const STICK_LENGTHS_PX = STICK_LENGTHS_FT.map(ftToPx);
-const NUM_LEDS_PER_PX = ftToPx(NUM_LEDS_PER_FT);
+const NUM_LEDS_PER_PX = NUM_LEDS_PER_FT / ftToPx(1);
 const INNER_RING_RADIUS_PX = ftToPx(INNER_RING_RADIUS_FT);
 
 const Canvas = styled.canvas`
@@ -108,13 +110,17 @@ const LEDs = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
     ry: INNER_RING_RADIUS_PX * ELLIPSE_RATIO
   });
 
-  const numLEDsPerStrip = stickLengthPx * NUM_LEDS_PER_PX;
+  const numLEDsInStrip = stickLengthPx * NUM_LEDS_PER_PX;
   const degreeStep = 360 / NUM_STRIPS_PER_DISC;
-  const leds = d3.range(NUM_STRIPS_PER_DISC).map(stripNumber => {
-    //d3.range(NUM_LEDS_PER_PX).map(LED(x, y))
-    return LED(pointOnEllipse(outerEllipse, radians(stripNumber * degreeStep)));
+  const ledStrips = d3.range(NUM_STRIPS_PER_DISC).map(stripNumber => {
+    const r = radians(stripNumber * degreeStep) + radians(degreeStep / 2);
+    const stripStart = pointOnEllipse(innerEllipse, r);
+    const stripEnd = pointOnEllipse(outerEllipse, r);
+    return d3
+      .range(0, 1, 1 / numLEDsInStrip)
+      .map(howFar => LED(pointOnLine(stripEnd, stripStart, howFar)));
   });
-  return { outerEllipse, innerEllipse, leds };
+  return { outerEllipse, innerEllipse, ledStrips };
 });
 
 const Prototype = () => {
@@ -125,7 +131,9 @@ const Prototype = () => {
       LEDs.forEach(disc => {
         disc.outerEllipse.draw(context);
         disc.innerEllipse.draw(context);
-        disc.leds.forEach(led => led.draw(context));
+        disc.ledStrips.forEach(ledStrip =>
+          ledStrip.forEach(led => led.draw(context))
+        );
       });
     }
   }, [context]);
