@@ -1,17 +1,37 @@
-#include "sdkconfig.h"
-#include "esp_attr.h"
+#define DATA_PIN_00  2
+#define DATA_PIN_01  4
+#define DATA_PIN_02  5
+#define DATA_PIN_03  12
+#define DATA_PIN_04  13
+#define DATA_PIN_05  14
+#define DATA_PIN_06  18
+#define DATA_PIN_07  19
+#define DATA_PIN_08  21
+#define DATA_PIN_09  22
+#define DATA_PIN_10  23
+#define DATA_PIN_11  25
+#define DATA_PIN_12  26
+#define DATA_PIN_13  27
+#define DATA_PIN_14  32
+#define DATA_PIN_15  33
+
+#define BRIGHTNESS   255
+#define COLOR_ORDER  GRB
+#define LED_TYPE     WS2813
 
 #define NUM_DISCS            8
 #define NUM_STRIPS_PER_DISC  16
 
-#define NUM_LEDS_DISC_0      522  // 10.875'
-#define NUM_LEDS_DISC_1      468  // 9.75'
-#define NUM_LEDS_DISC_2      414  // 8.625'
-#define NUM_LEDS_DISC_3      360  // 7.5'
-#define NUM_LEDS_DISC_4      306  // 6.375'
-#define NUM_LEDS_DISC_5      252  // 5.25'
-#define NUM_LEDS_DISC_6      198  // 4.125'
-#define NUM_LEDS_DISC_7      144  // 3'
+// 16 * (522 + 468 + 414 + 360 + 306 + 252 + 198 + 144)
+// Total: 42,624
+#define NUM_LEDS_DISC_0  522  // 10.875'
+#define NUM_LEDS_DISC_1  468  // 9.75'
+#define NUM_LEDS_DISC_2  414  // 8.625'
+#define NUM_LEDS_DISC_3  360  // 7.5'
+#define NUM_LEDS_DISC_4  306  // 6.375'
+#define NUM_LEDS_DISC_5  252  // 5.25'
+#define NUM_LEDS_DISC_6  198  // 4.125'
+#define NUM_LEDS_DISC_7  144  // 3'
 
 CRGB *DISC_0_STRIP_00;
 CRGB *DISC_0_STRIP_01;
