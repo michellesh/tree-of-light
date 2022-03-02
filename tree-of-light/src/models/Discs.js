@@ -86,9 +86,7 @@ export const DISCS_PETALS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
 
   const numLEDsInStrip = stickLengthPx * NUM_LEDS_PER_PX;
 
-  const {
-    leds, petalsInner1, petalsInner2, petalsOuter
-  } = d3.range(NUM_PETALS_PER_DISC).reduce((acc, petalIndex) => {
+  const { leds, petals } = d3.range(NUM_PETALS_PER_DISC).reduce((acc, petalIndex) => {
     const r = radians(petalIndex * DEGREES_BETWEEN_PETALS);
     const r2 = radians(petalIndex * DEGREES_BETWEEN_PETALS + DEGREES_BETWEEN_PETALS / 2);
     const r3 = radians(petalIndex * DEGREES_BETWEEN_PETALS + DEGREES_BETWEEN_PETALS);
@@ -118,14 +116,14 @@ export const DISCS_PETALS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
       }), { strip4: [], strip5: [] });
 
     acc.leds.push(strip1.concat(strip2).concat(strip3).concat(strip4).concat(strip5));
-    acc.petalsInner1.push(strip1);
-    acc.petalsInner2.push(strip2);
-    acc.petalsInner2.push(strip3);
-    acc.petalsOuter.push(strip4);
-    acc.petalsOuter.push(strip5);
+    acc.petals.inner1.push(strip1);
+    acc.petals.inner2.push(strip2);
+    acc.petals.inner2.push(strip3);
+    acc.petals.outer.push(strip4);
+    acc.petals.outer.push(strip5);
 
     return acc;
-  }, { leds: [], petalsInner1: [], petalsInner2: [], petalsOuter: [] });
+  }, { leds: [], petals: { inner1: [], inner2: [], outer: [] } });
 
-  return { outerEllipse, innerEllipse, leds, petalsInner1, petalsInner2, petalsOuter };
+  return { outerEllipse, innerEllipse, leds, petals };
 });

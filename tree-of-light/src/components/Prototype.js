@@ -32,7 +32,8 @@ const Prototype = () => {
       animations.showLEDs(context, DISCS);
       switch (animation) {
         case 'Ripple':
-          animations.ripple(context, DISCS);
+          //animations.ripple(context, DISCS);
+          animations.petalRipple(context, DISCS);
           break;
         case 'Juggle':
           animations.juggle(context, DISCS);
@@ -45,8 +46,8 @@ const Prototype = () => {
 
   return (
     <Container>
-      {animationList.map(a => (
-        <button onClick={() => setAnimation(a)}>{a}</button>
+      {animationList.map((animation, i) => (
+        <button key={i} onClick={() => setAnimation(animation)}>{animation}</button>
       ))}
       <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
     </Container>
