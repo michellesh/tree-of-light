@@ -14,7 +14,7 @@ export const Ellipse = config => {
       const { x, y, rx, ry, rotation, startAngle, endAngle } = _ellipse;
       context.beginPath();
       context.ellipse(x, y, rx, ry, rotation, startAngle, endAngle);
-      context.strokeStyle = 'black';
+      context.strokeStyle = 'white';
       context.stroke();
     }
   });

@@ -28,10 +28,10 @@ const STICK_LENGTHS_PX = STICK_LENGTHS_FT.map(ftToPx);
 const NUM_LEDS_PER_PX = NUM_LEDS_PER_FT / ftToPx(1);
 const INNER_RING_RADIUS_PX = ftToPx(INNER_RING_RADIUS_FT);
 
-export const DISCS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
+const ELLIPSES = (stickLengthPx, index) => {
   // Center point of disc
   const x = WIDTH / 2;
-  const y = TOP_OFFSET + DISTANCE_BETWEEN_DISCS * i;
+  const y = TOP_OFFSET + DISTANCE_BETWEEN_DISCS * index;
 
   // Outer ellipse
   const outerEllipse = Ellipse({
@@ -48,6 +48,12 @@ export const DISCS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
     rx: INNER_RING_RADIUS_PX,
     ry: INNER_RING_RADIUS_PX * ELLIPSE_RATIO
   });
+
+  return { innerEllipse, outerEllipse };
+};
+
+export const DISCS_STICKS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
+  const { innerEllipse, outerEllipse } = ELLIPSES(stickLengthPx, i);
 
   const numLEDsInStrip = stickLengthPx * NUM_LEDS_PER_PX;
 

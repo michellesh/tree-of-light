@@ -1,5 +1,5 @@
 const defaults = {
-  color: 'black',
+  color: 'white',
   endAngle: 2 * Math.PI,
   radius: 1,
   startAngle: 0
