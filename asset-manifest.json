@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/tree-of-light/static/css/main.e6c13ad2.css",
-    "main.js": "/tree-of-light/static/js/main.670f5e7a.js",
+    "main.js": "/tree-of-light/static/js/main.215f9587.js",
     "index.html": "/tree-of-light/index.html",
     "main.e6c13ad2.css.map": "/tree-of-light/static/css/main.e6c13ad2.css.map",
-    "main.670f5e7a.js.map": "/tree-of-light/static/js/main.670f5e7a.js.map"
+    "main.215f9587.js.map": "/tree-of-light/static/js/main.215f9587.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.670f5e7a.js"
+    "static/js/main.215f9587.js"
   ]
 }
