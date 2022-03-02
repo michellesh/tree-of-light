@@ -5,34 +5,52 @@ export const petalRipple = (context, discs) => {
   clearCanvas(context);
 
   const discStates = discs.map(d => ({
-    petalType: 'inner1',
-    prevIndex: 0,
-    index: 1
+    inner1: { prevIndex: -2, index: -1, length: d.petals.inner1[0].length },
+    inner2: { prevIndex: -2, index: -1, length: d.petals.inner2[0].length },
+    outer: { prevIndex: -2, index: -1, length: d.petals.outer[0].length }
   }));
+  const resetDiscState = discIndex => {
+    discStates[discIndex].inner1.prevIndex = -2;
+    discStates[discIndex].inner1.index = -1;
+    discStates[discIndex].inner2.prevIndex = -2;
+    discStates[discIndex].inner2.index = -1;
+    discStates[discIndex].outer.prevIndex = -2;
+    discStates[discIndex].outer.index = -1;
+  };
+  const incIndex = discState => {
+    discState.prevIndex = discState.index;
+    discState.index++;
+  }
 
   const _petalRipple = () => {
     discs.forEach((disc, d) => {
-      const { index, prevIndex, petalType } = discStates[d];
-      disc.petals[petalType].forEach(ledStrip => {
-        if (index < ledStrip.length) {
-          ledStrip[index] = ledStrip[index].on();
-        }
-        if (prevIndex < ledStrip.length) {
-          ledStrip[prevIndex] = ledStrip[prevIndex].off();
-        }
+      ['inner1', 'inner2', 'outer'].forEach(petalType => {
+        const { index, prevIndex } = discStates[d][petalType];
+        disc.petals[petalType].forEach(ledStrip => {
+          if (index >= 0 && index < ledStrip.length) {
+            ledStrip[index] = ledStrip[index].on();
+          }
+          if (prevIndex >= 0 && prevIndex < ledStrip.length) {
+            ledStrip[prevIndex] = ledStrip[prevIndex].off();
+          }
+        });
       });
     });
     discStates.forEach((state, d) => {
-      state.prevIndex = state.index;
-      state.index++;
-      if (state.index > discs[d].petals[state.petalType][0].length) {
-        state.index = 0;
-        state.petalType =
-          state.petalType == 'inner1'
-            ? 'inner2'
-            : state.petalType == 'inner2'
-            ? 'outer'
-            : 'inner1';
+      if (state.inner1.index <= state.inner1.length) {
+        incIndex(state.inner1);
+      }
+      if (state.inner1.index > state.inner1.length) {
+        incIndex(state.inner2);
+      }
+      if (state.inner2.index > state.inner2.length / 2) {
+        incIndex(state.outer);
+      }
+      if (
+        state.inner2.index > state.inner2.length &&
+        state.outer.index > state.outer.length
+      ) {
+        resetDiscState(d);
       }
     });
     showPetals(context, discs);
