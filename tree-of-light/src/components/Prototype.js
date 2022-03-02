@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { BACKGROUND_COLOR, WIDTH, HEIGHT } from 'const';
 import * as animations from 'animations';
 import { useCanvas } from 'hooks';
-import { DISCS_STICKS as DISCS } from 'models/Discs';
+import { DISCS_PETALS as DISCS } from 'models/Discs';
 
 const Container = styled.div`
   background-color: ${BACKGROUND_COLOR};
