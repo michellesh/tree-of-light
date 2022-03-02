@@ -86,40 +86,46 @@ export const DISCS_PETALS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
 
   const numLEDsInStrip = stickLengthPx * NUM_LEDS_PER_PX;
 
-  const leds = d3.range(NUM_PETALS_PER_DISC).map(petalIndex => {
+  const {
+    leds, petalsInner1, petalsInner2, petalsOuter
+  } = d3.range(NUM_PETALS_PER_DISC).reduce((acc, petalIndex) => {
     const r = radians(petalIndex * DEGREES_BETWEEN_PETALS);
-    const p2 = pointOnEllipse(middleEllipse, r);
-    const p1 = pointOnEllipse(innerEllipse, r);
-    const strip1 = d3
-      .range(0, 1, 1 / numLEDsInStrip)
-      .map(howFar => LED(pointOnLine(p1, p2, howFar)));
-
     const r2 = radians(petalIndex * DEGREES_BETWEEN_PETALS + DEGREES_BETWEEN_PETALS / 2);
-    const p3 = pointOnEllipse(outerEllipse, r2);
-    const strip2 = d3
-      .range(0, 1, 1 / numLEDsInStrip)
-      .map(howFar => LED(pointOnLine(p2, p3, howFar)));
-
     const r3 = radians(petalIndex * DEGREES_BETWEEN_PETALS + DEGREES_BETWEEN_PETALS);
-    const p4 = pointOnEllipse(middleEllipse, r3);
-    const strip3 = d3
-      .range(0, 1, 1 / numLEDsInStrip)
-      .map(howFar => LED(pointOnLine(p3, p4, howFar)));
-
     const r4 = radians(petalIndex * DEGREES_BETWEEN_PETALS + DEGREES_BETWEEN_PETALS * 1.5);
+
+    const p1 = pointOnEllipse(innerEllipse, r);
+    const p2 = pointOnEllipse(middleEllipse, r);
+    const p3 = pointOnEllipse(outerEllipse, r2);
+    const p4 = pointOnEllipse(middleEllipse, r3);
     const p5 = pointOnLine(p3, p4, 0.5);
     const p6 = pointOnEllipse(outerEllipse, r3);
     const p7 = pointOnLine(p4, pointOnEllipse(outerEllipse, r4), 0.5);
 
-    const strip4 = d3
+    const { strip1, strip2, strip3 } = d3
       .range(0, 1, 1 / numLEDsInStrip)
-      .map(howFar => LED(pointOnLine(p5, p6, howFar)));
-    const strip5 = d3
-      .range(0, 1, 1 / numLEDsInStrip)
-      .map(howFar => LED(pointOnLine(p6, p7, howFar)));
+      .reduce((acc, howFar) => ({
+        strip1: acc.strip1.concat(LED(pointOnLine(p1, p2, howFar))),
+        strip2: acc.strip2.concat(LED(pointOnLine(p2, p3, howFar))),
+        strip3: acc.strip3.concat(LED(pointOnLine(p4, p3, howFar)))
+      }), { strip1: [], strip2: [], strip3: [] });
 
-    return strip1.concat(strip2).concat(strip3).concat(strip4).concat(strip5);
-  });
+    const { strip4, strip5 } = d3
+      .range(0, 1, 1 / numLEDsInStrip * 2)
+      .reduce((acc, howFar) => ({
+        strip4: acc.strip4.concat(LED(pointOnLine(p5, p6, howFar))),
+        strip5: acc.strip5.concat(LED(pointOnLine(p7, p6, howFar))),
+      }), { strip4: [], strip5: [] });
 
-  return { outerEllipse, innerEllipse, leds };
+    acc.leds.push(strip1.concat(strip2).concat(strip3).concat(strip4).concat(strip5));
+    acc.petalsInner1.push(strip1);
+    acc.petalsInner2.push(strip2);
+    acc.petalsInner2.push(strip3);
+    acc.petalsOuter.push(strip4);
+    acc.petalsOuter.push(strip5);
+
+    return acc;
+  }, { leds: [], petalsInner1: [], petalsInner2: [], petalsOuter: [] });
+
+  return { outerEllipse, innerEllipse, leds, petalsInner1, petalsInner2, petalsOuter };
 });
