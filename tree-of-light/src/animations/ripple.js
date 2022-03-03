@@ -20,7 +20,7 @@ export const petalRipple = (context, discs) => {
   const incIndex = discState => {
     discState.prevIndex = discState.index;
     discState.index++;
-  }
+  };
 
   const _petalRipple = () => {
     discs.forEach((disc, d) => {
@@ -36,23 +36,24 @@ export const petalRipple = (context, discs) => {
         });
       });
     });
-    discStates.forEach((state, d) => {
-      if (state.inner1.index <= state.inner1.length) {
-        incIndex(state.inner1);
-      }
-      if (state.inner1.index > state.inner1.length) {
-        incIndex(state.inner2);
-      }
-      if (state.inner2.index > state.inner2.length / 2) {
-        incIndex(state.outer);
-      }
-      if (
-        state.inner2.index > state.inner2.length &&
-        state.outer.index > state.outer.length
-      ) {
-        resetDiscState(d);
-      }
-    });
+    if (
+      discStates[0].inner2.index > discStates[0].inner2.length &&
+      discStates[0].outer.index > discStates[0].outer.length
+    ) {
+      discStates.forEach((state, d) => resetDiscState(d));
+    } else {
+      discStates.forEach(state => {
+        if (state.inner1.index <= state.inner1.length) {
+          incIndex(state.inner1);
+        }
+        if (state.inner1.index > state.inner1.length) {
+          incIndex(state.inner2);
+        }
+        if (state.inner2.index > state.inner2.length / 2) {
+          incIndex(state.outer);
+        }
+      });
+    }
     showPetals(context, discs);
     window.reqId = window.requestAnimationFrame(_petalRipple);
   };
