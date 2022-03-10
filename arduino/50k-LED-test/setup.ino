@@ -6,7 +6,8 @@ uint8_t getDiscIndex() {
          : WiFi.macAddress() == tol_macAddressStr4 ? 4
          : WiFi.macAddress() == tol_macAddressStr5 ? 5
          : WiFi.macAddress() == tol_macAddressStr6 ? 6
-                                                   : 7;
+         : WiFi.macAddress() == tol_macAddressStr7 ? 7
+                                                   : 8;
 }
 
 void initArrays() {
@@ -145,9 +146,27 @@ void initArrays() {
   DISC_7_STRIP_13 = new CRGB[NUM_LEDS_DISC_7];
   DISC_7_STRIP_14 = new CRGB[NUM_LEDS_DISC_7];
   DISC_7_STRIP_15 = new CRGB[NUM_LEDS_DISC_7];
+
+  DISC_8_STRIP_00 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_01 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_02 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_03 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_04 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_05 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_06 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_07 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_08 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_09 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_10 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_11 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_12 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_13 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_14 = new CRGB[NUM_LEDS_DISC_8];
+  DISC_8_STRIP_15 = new CRGB[NUM_LEDS_DISC_8];
 }
 
-void initLEDs(uint8_t discIndex) {
+void initLEDs() {
+  uint8_t discIndex = getDiscIndex();
   int numLeds = getNumLeds(discIndex);
   switch (discIndex) {
     case 0:
@@ -293,6 +312,24 @@ void initLEDs(uint8_t discIndex) {
       FastLED.addLeds<LED_TYPE, DATA_PIN_13, COLOR_ORDER>(DISC_7_STRIP_13, numLeds);
       FastLED.addLeds<LED_TYPE, DATA_PIN_14, COLOR_ORDER>(DISC_7_STRIP_14, numLeds);
       FastLED.addLeds<LED_TYPE, DATA_PIN_15, COLOR_ORDER>(DISC_7_STRIP_15, numLeds);
+      break;
+    case 8:
+      FastLED.addLeds<LED_TYPE, DATA_PIN_00, COLOR_ORDER>(DISC_8_STRIP_00, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_01, COLOR_ORDER>(DISC_8_STRIP_01, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_02, COLOR_ORDER>(DISC_8_STRIP_02, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_03, COLOR_ORDER>(DISC_8_STRIP_03, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_04, COLOR_ORDER>(DISC_8_STRIP_04, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_05, COLOR_ORDER>(DISC_8_STRIP_05, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_06, COLOR_ORDER>(DISC_8_STRIP_06, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_07, COLOR_ORDER>(DISC_8_STRIP_07, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_08, COLOR_ORDER>(DISC_8_STRIP_08, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_09, COLOR_ORDER>(DISC_8_STRIP_09, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_10, COLOR_ORDER>(DISC_8_STRIP_10, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_11, COLOR_ORDER>(DISC_8_STRIP_11, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_12, COLOR_ORDER>(DISC_8_STRIP_12, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_13, COLOR_ORDER>(DISC_8_STRIP_13, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_14, COLOR_ORDER>(DISC_8_STRIP_14, numLeds);
+      FastLED.addLeds<LED_TYPE, DATA_PIN_15, COLOR_ORDER>(DISC_8_STRIP_15, numLeds);
       break;
   }
 

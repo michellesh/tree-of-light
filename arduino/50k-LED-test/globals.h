@@ -19,19 +19,28 @@
 #define COLOR_ORDER  GRB
 #define LED_TYPE     WS2813
 
-#define NUM_DISCS            8
+#define NUM_DISCS            9
 #define NUM_STRIPS_PER_DISC  16
 
-// 16 * (522 + 468 + 414 + 360 + 306 + 252 + 198 + 144)
-// Total: 42,624
-#define NUM_LEDS_DISC_0  522  // 10.875'
-#define NUM_LEDS_DISC_1  468  // 9.75'
-#define NUM_LEDS_DISC_2  414  // 8.625'
-#define NUM_LEDS_DISC_3  360  // 7.5'
-#define NUM_LEDS_DISC_4  306  // 6.375'
-#define NUM_LEDS_DISC_5  252  // 5.25'
-#define NUM_LEDS_DISC_6  198  // 4.125'
-#define NUM_LEDS_DISC_7  144  // 3'
+// LED counts were calculated by converting ft -> m
+// then multiply by number of leds per meter (144)
+//
+//   `stripLengthFt` = length of strip (ft)
+//   `metersPerFt` = 0.3048
+//   `ledsPerMeter` = 144
+//
+//   stripLengthFt * metersPerFt * ledsPerMeter
+//
+// Total LEDs: 47408
+#define NUM_LEDS_DISC_0  527  // 12'
+#define NUM_LEDS_DISC_1  477  // 10.875'
+#define NUM_LEDS_DISC_2  428  // 9.75'
+#define NUM_LEDS_DISC_3  379  // 8.625'
+#define NUM_LEDS_DISC_4  329  // 7.5'
+#define NUM_LEDS_DISC_5  280  // 6.375'
+#define NUM_LEDS_DISC_6  230  // 5.25'
+#define NUM_LEDS_DISC_7  181  // 4.125'
+#define NUM_LEDS_DISC_8  132  // 3'
 
 CRGB *DISC_0_STRIP_00;
 CRGB *DISC_0_STRIP_01;
@@ -168,3 +177,20 @@ CRGB *DISC_7_STRIP_12;
 CRGB *DISC_7_STRIP_13;
 CRGB *DISC_7_STRIP_14;
 CRGB *DISC_7_STRIP_15;
+
+CRGB *DISC_8_STRIP_00;
+CRGB *DISC_8_STRIP_01;
+CRGB *DISC_8_STRIP_02;
+CRGB *DISC_8_STRIP_03;
+CRGB *DISC_8_STRIP_04;
+CRGB *DISC_8_STRIP_05;
+CRGB *DISC_8_STRIP_06;
+CRGB *DISC_8_STRIP_07;
+CRGB *DISC_8_STRIP_08;
+CRGB *DISC_8_STRIP_09;
+CRGB *DISC_8_STRIP_10;
+CRGB *DISC_8_STRIP_11;
+CRGB *DISC_8_STRIP_12;
+CRGB *DISC_8_STRIP_13;
+CRGB *DISC_8_STRIP_14;
+CRGB *DISC_8_STRIP_15;
