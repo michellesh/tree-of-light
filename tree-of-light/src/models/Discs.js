@@ -3,9 +3,10 @@ import * as d3 from 'd3';
 import { WIDTH } from 'const';
 import { Ellipse } from 'models/Ellipse';
 import { LED } from 'models/LED';
-import { pointOnEllipse, pointOnLine, radians } from 'utils';
+import { distance, pointOnEllipse, pointOnLine, radians } from 'utils';
 
-const ELLIPSE_RATIO = 0.5; // ratio of width/height for each ellipse
+//const ELLIPSE_RATIO = 0.5; // ratio of width/height for each ellipse
+const ELLIPSE_RATIO = 1; // ratio of width/height for each ellipse
 const ELLIPSE_MAX_WIDTH = 300; // width of widest ellipse on top in px
 const DISTANCE_BETWEEN_DISCS = 100; // space between each disc in px
 const NUM_STRIPS_PER_DISC = 16; // number of LED strips in each disc
@@ -99,6 +100,15 @@ export const DISCS_PETALS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
     const p5 = pointOnLine(p3, p4, 0.5);
     const p6 = pointOnEllipse(outerEllipse, r3);
     const p7 = pointOnLine(p4, pointOnEllipse(outerEllipse, r4), 0.5);
+
+    if (i == 0) {
+      console.log('distance p1 p2', distance(p1, p2));
+      console.log('distance p2 p3', distance(p2, p3));
+      console.log('distance p3 p4', distance(p3, p4));
+      console.log('distance p4 p5', distance(p4, p5));
+      console.log('distance p5 p6', distance(p5, p6));
+      console.log('distance p6 p7', distance(p6, p7));
+    }
 
     const { strip1, strip2, strip3 } = d3
       .range(0, 1, 1 / numLEDsInStrip)

@@ -1,5 +1,8 @@
 const OFFSET = Math.PI / 2;
 
+export const distance = (p1, p2) =>
+  Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+
 export const radians = degrees => (degrees * Math.PI) / 180 - OFFSET;
 
 // get a point along the line that forms between p1 and p2
