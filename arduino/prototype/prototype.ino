@@ -12,9 +12,9 @@ void setup() {
   Serial.begin(115200);
   delay(500);
 
-  int offset = 0;
-  for (uint16_t d = 0; d < NUM_DISCS; d++) {
-    Disc disc = {d, NUM_LEDS[d], NUM_INNER_1[d], NUM_INNER_2[d], NUM_OUTER[d], offset};
+  uint16_t offset = 0;
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    Disc disc = {d, NUM_LEDS[d], offset};
     discs[d] = disc;
     offset += disc.numLEDs;
   }
@@ -27,7 +27,7 @@ void setup() {
                   NUM_LEDS_PIN_6 +
                   NUM_LEDS_PIN_7];
 
-  int totalLEDs = 0;
+  uint16_t totalLEDs = 0;
   FastLED.addLeds<LED_TYPE, PIN_1>(leds, totalLEDs, NUM_LEDS_PIN_1);
   totalLEDs += NUM_LEDS_PIN_1;
   FastLED.addLeds<LED_TYPE, PIN_2>(leds, totalLEDs, NUM_LEDS_PIN_2);
@@ -42,7 +42,7 @@ void setup() {
   totalLEDs += NUM_LEDS_PIN_6;
   FastLED.addLeds<LED_TYPE, PIN_7>(leds, totalLEDs, NUM_LEDS_PIN_7);
 
-  for (uint16_t d = 0; d < NUM_DISCS; d++) {
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
     discs[d].pixels = &leds[discs[d].offset];
   }
 

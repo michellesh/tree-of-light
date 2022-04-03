@@ -25,10 +25,6 @@ CRGB LEDS_PIN_5[NUM_LEDS_PIN_5];
 CRGB LEDS_PIN_6[NUM_LEDS_PIN_6];
 CRGB LEDS_PIN_7[NUM_LEDS_PIN_7];
 
-CRGB *leds;
+uint8_t NUM_LEDS[] = {240, 216, 186, 168, 150, 120, 90, 72, 42};
 
-//                 DISC:   0    1    2    3    4    5   6   7   8
-uint8_t NUM_LEDS[] =    {240, 216, 186, 168, 150, 120, 90, 72, 42};
-uint8_t NUM_INNER_1[] = {  8,   8,   7,   6,   5,   4,  3,  2,  1};
-uint8_t NUM_INNER_2[] = { 10,   9,   7,   7,   6,   5,  4,  3,  2};
-uint8_t NUM_OUTER[] =   {  6,   5,   5,   4,   4,   3,  2,  2,  1};
+CRGB *leds;
