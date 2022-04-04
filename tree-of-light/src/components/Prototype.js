@@ -18,7 +18,7 @@ console.log(
 );
 console.log('DISCS', DISCS);
 console.log(
-  DISCS.map((disc, i) => `int16_t radiusDisc${i}[] = \{${disc.radii.join(', ')}\};`).join('\n')
+  DISCS.map((disc, i) => `int16_t RADII_DISC_${i}[] = \{${disc.radii.join(', ')}\};`).join('\n')
 );
 
 const animationList = ['Ripple', 'Juggle', 'Stop'];
