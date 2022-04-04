@@ -17,6 +17,9 @@ console.log(
   DISCS.reduce((acc, disc) => acc + disc.leds.flatMap(x => x).length, 0)
 );
 console.log('DISCS', DISCS);
+console.log(
+  DISCS.map((disc, i) => `int16_t radiusDisc${i}[] = \{${disc.radii.join(', ')}\};`).join('\n')
+);
 
 const animationList = ['Ripple', 'Juggle', 'Stop'];
 
@@ -33,7 +36,8 @@ const Prototype = () => {
       switch (animation) {
         case 'Ripple':
           //animations.ripple(context, DISCS);
-          animations.petalRipple(context, DISCS);
+          //animations.petalRipple(context, DISCS);
+          animations.radiusRipple(context, DISCS);
           break;
         case 'Juggle':
           animations.juggle(context, DISCS);
@@ -47,7 +51,9 @@ const Prototype = () => {
   return (
     <Container>
       {animationList.map((animation, i) => (
-        <button key={i} onClick={() => setAnimation(animation)}>{animation}</button>
+        <button key={i} onClick={() => setAnimation(animation)}>
+          {animation}
+        </button>
       ))}
       <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
     </Container>

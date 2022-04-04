@@ -1,5 +1,29 @@
 import { clearCanvas } from 'utils';
-import { showLEDs, showPetals } from 'animations';
+import { showAllLEDs, showLEDs, showPetals } from 'animations';
+
+export const radiusRipple = (context, discs) => {
+  clearCanvas(context);
+
+  let radius = 0;
+  const threshold = 10;
+
+  const _radiusRipple = () => {
+    discs.forEach((disc, d) => {
+      disc.allLeds = disc.allLeds.map((led, i) =>
+        Math.abs(disc.radii[i] - radius) < threshold ? led.on() : led.off()
+      );
+    });
+
+    showAllLEDs(context, discs);
+    radius++;
+    if (radius >= 255) {
+      radius = 0;
+    }
+    window.reqId = window.requestAnimationFrame(_radiusRipple);
+  };
+
+  window.reqId = window.requestAnimationFrame(_radiusRipple);
+};
 
 export const petalRipple = (context, discs) => {
   clearCanvas(context);

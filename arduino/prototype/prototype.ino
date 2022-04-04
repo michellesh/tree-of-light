@@ -50,10 +50,6 @@ void setup() {
 }
 
 void loop() {
-  for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
-      discs[d].pixels[p] = rainbow[d];
-    }
-  }
+  ripple();
   FastLED.show();
 }

@@ -1,5 +1,14 @@
 import { clearCanvas } from 'utils';
 
+export const showAllLEDs = (context, discs) => {
+  clearCanvas(context);
+  discs.forEach(disc => {
+    disc.outerEllipse.draw(context);
+    disc.innerEllipse.draw(context);
+    disc.allLeds.forEach(led => led.draw(context));
+  })
+};
+
 export const showLEDs = (context, discs) => {
   clearCanvas(context);
   discs.forEach(disc => {
