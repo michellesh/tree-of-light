@@ -32,7 +32,8 @@ void setup() {
 
   uint16_t offset = 0;
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    Disc disc = {d, NUM_LEDS_DISC[d], offset, &leds[offset]};
+    Disc disc = {d, NUM_LEDS_DISC[d], offset, &leds[offset], MAX_RADIUS_DISC[d]};
+
     discs[d] = disc;
     offset += disc.numLEDs;
   }
@@ -41,6 +42,6 @@ void setup() {
 }
 
 void loop() {
-  ripple();
+  spin();
   FastLED.show();
 }

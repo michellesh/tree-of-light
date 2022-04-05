@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { WIDTH } from 'const';
 import { Ellipse } from 'models/Ellipse';
 import { LED } from 'models/LED';
-import { distance, pointOnEllipse, pointOnLine, radians } from 'utils';
+import { angleBetweenCircumferencePts, degrees, distance, pointOnEllipse, pointOnLine, radians } from 'utils';
 
 //const ELLIPSE_RATIO = 0.5; // ratio of width/height for each ellipse
 const ELLIPSE_RATIO = 1;
@@ -34,6 +34,20 @@ const petalLengths = {
   8: { p1: 1, p2: 2, p3: 1 }
 };
 
+// the offset of the start of the very first petal group
+// compared to the top disc
+const addDegreeOffset = {
+  0: 0,
+  1: 60,
+  2: 120,
+  3: 300,
+  4: 300,
+  5: 0,
+  6: 60,
+  7: 120,
+  8: 120,
+}
+
 const ftToPx = d3
   .scaleLinear()
   .domain([0, d3.max(STICK_LENGTHS_FT)])
@@ -42,6 +56,7 @@ const ftToPx = d3
 const STICK_LENGTHS_PX = STICK_LENGTHS_FT.map(ftToPx);
 const NUM_LEDS_PER_PX = NUM_LEDS_PER_FT / ftToPx(1);
 const INNER_RING_RADIUS_PX = ftToPx(INNER_RING_RADIUS_FT);
+console.log('INNER_RING_RADIUS_PX',INNER_RING_RADIUS_PX);
 
 const scaleRadius = d3
   .scaleLinear()
@@ -192,5 +207,22 @@ export const DISCS_PETALS = STICK_LENGTHS_PX.map((stickLengthPx, i) => {
     Math.round(pxToRadius(distance(led, outerEllipse)))
   );
 
-  return { outerEllipse, innerEllipse, allLeds, leds, petals, radii };
+  //const ellipsePt = allLeds[0];
+  const degreeOffset = addDegreeOffset[i];
+  const ellipsePt = pointOnEllipse(outerEllipse, radians(0));
+  const ellipsePt180 = pointOnEllipse(outerEllipse, radians(180));
+  const angles = allLeds.map(led => {
+    let d;
+    if (led.x < outerEllipse.x) {
+      d = angleBetweenCircumferencePts(outerEllipse, ellipsePt180, led);
+      d = degrees(d) + 180;
+    } else {
+      d = angleBetweenCircumferencePts(outerEllipse, ellipsePt, led);
+      d = degrees(d);
+    }
+    d = Math.round(d) - degreeOffset;
+    return d < 0 ? d + 360 : d;
+  });
+
+  return { outerEllipse, innerEllipse, allLeds, leds, petals, radii, angles };
 });

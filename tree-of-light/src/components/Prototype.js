@@ -5,6 +5,8 @@ import { BACKGROUND_COLOR, WIDTH, HEIGHT } from 'const';
 import * as animations from 'animations';
 import { useCanvas } from 'hooks';
 import { DISCS_PETALS as DISCS } from 'models/Discs';
+import { LED } from 'models/LED';
+import { angleBetweenCircumferencePts, degrees, distance, pointOnEllipse, pointOnLine, radians } from 'utils';
 
 const Container = styled.div`
   background-color: ${BACKGROUND_COLOR};
@@ -20,6 +22,12 @@ console.log('DISCS', DISCS);
 console.log(
   DISCS.map((disc, i) => `int16_t RADII_DISC_${i}[] = \{${disc.radii.join(', ')}\};`).join('\n')
 );
+console.log(
+  DISCS.map((disc, i) => `int16_t ANGLES_DISC_${i}[] = \{${disc.angles.join(', ')}\};`).join('\n')
+);
+DISCS.forEach((disc, i) => {
+  console.log(i, disc.angles.length, disc.angles.length / 6);
+});
 
 const animationList = ['Ripple', 'Juggle', 'Stop'];
 
@@ -33,6 +41,10 @@ const Prototype = () => {
     }
     if (context) {
       animations.showLEDs(context, DISCS);
+      LED({x:537.5, y:872}).radius(5).draw(context);
+      DISCS[8].allLeds.forEach((led, i) => {
+        context.fillText(DISCS[8].angles[i], led.x, led.y);
+      });
       switch (animation) {
         case 'Ripple':
           //animations.ripple(context, DISCS);
