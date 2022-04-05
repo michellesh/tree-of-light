@@ -43,3 +43,4 @@ export const pointOnEllipse = (ellipse, angleRadians) => ({
 });
 
 export * from './canvas';
+export * from './log';
