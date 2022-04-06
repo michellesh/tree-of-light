@@ -17,6 +17,9 @@
 #define NUM_LEDS_PIN_6  190
 #define NUM_LEDS_PIN_7  114
 
+// Incremented once per iteration of the loop
+unsigned long ticks = 0;
+
 CRGB LEDS_PIN_1[NUM_LEDS_PIN_1];
 CRGB LEDS_PIN_2[NUM_LEDS_PIN_2];
 CRGB LEDS_PIN_3[NUM_LEDS_PIN_3];

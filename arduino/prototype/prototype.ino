@@ -4,10 +4,15 @@
 
 #include "globals.h"
 #include "colors.h"
+#include "utils.h"
 #include "Disc.h"
 
 Disc discs[NUM_DISCS];
 CRGB *leds;
+
+#include "Spin.h"
+
+Spin spin;
 
 void setup() {
   Serial.begin(115200);
@@ -32,7 +37,8 @@ void setup() {
 
   uint16_t offset = 0;
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    Disc disc = {d, NUM_LEDS_DISC[d], offset, &leds[offset], MAX_RADIUS_DISC[d]};
+    Disc disc = {d, NUM_LEDS_DISC[d], offset, &leds[offset],
+                 MAX_RADIUS_DISC[d]};
 
     discs[d] = disc;
     offset += disc.numLEDs;
@@ -42,6 +48,10 @@ void setup() {
 }
 
 void loop() {
-  spin();
-  FastLED.show();
+  spin = spin.width(oscillate(40, 90))
+             .speed(oscillate(12, 3))
+             .offset(oscillate(90, 20))
+             .show();
+
+  ticks++;
 }
