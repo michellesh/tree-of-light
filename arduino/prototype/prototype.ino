@@ -10,8 +10,11 @@
 Disc discs[NUM_DISCS];
 CRGB *leds;
 
+#include "Range.h"
+#include "Ripple.h"
 #include "Spin.h"
 
+Ripple ripple;
 Spin spin;
 
 void setup() {
@@ -48,9 +51,9 @@ void setup() {
 }
 
 void loop() {
-  spin = spin.width(oscillate(40, 90))
-             .speed(oscillate(12, 3))
-             .offset(oscillate(90, 20))
+  spin = spin.width(oscillate(spin.WIDTH.MIN, spin.WIDTH.MAX))
+             .speed(oscillate(spin.SPEED.MAX, spin.SPEED.MIN))
+             .offset(oscillate(spin.OFFSET.MAX, spin.OFFSET.MIN))
              .show();
 
   ticks++;

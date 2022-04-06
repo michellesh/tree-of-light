@@ -1,14 +1,14 @@
-int16_t DEFAULT_WIDTH = 30;
-int16_t DEFAULT_SPEED = 4;
-int16_t DEFAULT_OFFSET = 30;
-
 struct Spin {
-  int16_t _angle = 0;              // the current angle
-  int16_t _width = DEFAULT_WIDTH;  // How many degrees along the circumference
-                                   // at the current angle to light up
-  int16_t _speed = DEFAULT_SPEED;    // How many degrees to increase the
-                                     // current angle each tick
-  int16_t _offset = DEFAULT_OFFSET;  // How much to increasse angle per disc
+  Range WIDTH = {30, 90, 30};
+  Range SPEED = {3, 12, 4};
+  Range OFFSET = {20, 90, 30};
+
+  int16_t _angle = 0;             // the current angle
+  int16_t _width = WIDTH.DFLT;    // How many degrees along the circumference
+                                  // at the current angle to light up
+  int16_t _speed = SPEED.DFLT;    // How many degrees to increase the
+                                  // current angle each tick
+  int16_t _offset = OFFSET.DFLT;  // How much to increasse angle per disc
 
   Spin width(int16_t width) {
     _width = width;
