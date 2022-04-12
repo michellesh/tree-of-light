@@ -1,14 +1,15 @@
 struct Spin {
-  Range WIDTH = {30, 90, 30};
-  Range SPEED = {3, 12, 4};
-  Range OFFSET = {20, 90, 30};
+  Range WIDTH = {30, 90, 30};   // How many degrees along the circumference at
+                                // the current angle to light up
+  Range SPEED = {3, 12, 4};     // How many degrees to add to the current
+                                // angle each time
+  Range OFFSET = {20, 90, 30};  // How many degrees to increase angle per disc
+                                // higher = tighter spiral
 
-  int16_t _angle = 0;             // the current angle
-  int16_t _width = WIDTH.DFLT;    // How many degrees along the circumference
-                                  // at the current angle to light up
-  int16_t _speed = SPEED.DFLT;    // How many degrees to increase the
-                                  // current angle each tick
-  int16_t _offset = OFFSET.DFLT;  // How much to increasse angle per disc
+  int16_t _angle = 0;  // the current angle
+  int16_t _width = WIDTH.DFLT;
+  int16_t _speed = SPEED.DFLT;
+  int16_t _offset = OFFSET.DFLT;
 
   Spin width(int16_t width) {
     _width = width;
