@@ -20,6 +20,8 @@ struct Twinkle {
     uint32_t clock32 = millis();
 
     for (uint16_t i = 0; i < NUM_LEDS_TOTAL; i++) {
+      // Use pseudo random number generator to get values for the clock speed
+      // adjustment and clock offset of this pixel
       PRNG16 = (uint16_t)(PRNG16 * 2053) + 1384;  // next 'random' number
       uint16_t myclockoffset16 = PRNG16;  // use that number as clock offset
       PRNG16 = (uint16_t)(PRNG16 * 2053) + 1384;  // next 'random' number
@@ -34,14 +36,14 @@ struct Twinkle {
       // We now have the adjusted 'clock' for this pixel, now we call
       // the function that computes what color the pixel should be based
       // on the "brightness = f( time )" idea.
-      leds[i] = computeOneTwinkle(myclock30, myunique8);
+      leds[i] = _getColor(myclock30, myunique8);
     }
 
     FastLED.show();
     return *this;
   }
 
-  CRGB computeOneTwinkle(uint32_t ms, uint8_t salt) {
+  CRGB _getColor(uint32_t ms, uint8_t salt) {
     uint16_t ticks = ms >> (8 - _speed);
     uint8_t fastcycle8 = ticks;
     uint16_t slowcycle16 = (ticks >> 8) + salt;
@@ -49,18 +51,9 @@ struct Twinkle {
     slowcycle16 = (slowcycle16 * 2053) + 1384;
     uint8_t slowcycle8 = (slowcycle16 & 0xFF) + (slowcycle16 >> 8);
 
-    uint8_t bright = 0;
-    if (((slowcycle8 & 0x0E) / 2) < _density) {
-      bright = attackDecayWave8(fastcycle8);
-    }
-
+    uint8_t bright =
+        ((slowcycle8 & 0x0E) / 2) < _density ? attackDecayWave8(fastcycle8) : 0;
     uint8_t hue = slowcycle8 - salt;
-    CRGB c;
-    if (bright > 0) {
-      c = ColorFromPalette(gCurrentPalette, hue, bright, NOBLEND);
-    } else {
-      c = CRGB::Black;
-    }
-    return c;
+    return bright > 0 ? palette.getColor(hue, bright) : CRGB::Black;
   }
 };

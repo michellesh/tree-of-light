@@ -6,8 +6,10 @@
 #include "colors.h"
 #include "utils.h"
 #include "Disc.h"
+#include "Palette.h"
 
 Disc discs[NUM_DISCS];
+Palette palette;
 CRGB *leds;
 
 #include "Range.h"
@@ -51,24 +53,17 @@ void setup() {
 
   // FastLED.setBrightness(50);
 
-  chooseNextColorPalette(gTargetPalette);
+  palette = palette.setNextColorPalette();
 }
 
 void loop() {
+  palette = palette.cycle();
   twinkle = twinkle.show();
 
   // spin = spin.width(oscillate(spin.WIDTH.MIN, spin.WIDTH.MAX))
   //            .speed(oscillate(spin.SPEED.MAX, spin.SPEED.MIN))
   //            .offset(oscillate(spin.OFFSET.MAX, spin.OFFSET.MIN))
   //            .show();
-
-  EVERY_N_SECONDS(SECONDS_PER_PALETTE) {
-    chooseNextColorPalette(gTargetPalette);
-  }
-
-  EVERY_N_MILLISECONDS(10) {
-    nblendPaletteTowardPalette(gCurrentPalette, gTargetPalette, 12);
-  }
 
   ticks++;
 }

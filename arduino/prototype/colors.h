@@ -9,15 +9,6 @@ uint32_t rainbow[] = {
     CRGB::Blue, CRGB::Purple, CRGB::Pink,   CRGB::White,
 };
 
-CRGBPalette16 gCurrentPalette;
-CRGBPalette16 gTargetPalette;
-// How often to change color palettes.
-#define SECONDS_PER_PALETTE 30
-// Also: toward the bottom of the file is an array
-// called "ActivePaletteList" which controls which color
-// palettes are used; you can add or remove color palettes
-// from there freely.
-
 // A mostly red palette with green accents and white trim.
 // "CRGB::Gray" is used as white to keep the brightness more uniform.
 const TProgmemRGBPalette16 RedGreenWhite_p FL_PROGMEM = {
@@ -84,19 +75,7 @@ const TProgmemRGBPalette16 Ice_p FL_PROGMEM = {
     Ice_Blue1, Ice_Blue1, Ice_Blue1, Ice_Blue1, Ice_Blue1, Ice_Blue1,
     Ice_Blue2, Ice_Blue2, Ice_Blue2, Ice_Blue3};
 
-// Add or remove palette names from this list to control which color
-// palettes are used, and in what order.
-const TProgmemRGBPalette16* ActivePaletteList[] = {
+const TProgmemRGBPalette16* activePalettes[] = {
     &RetroC9_p,       &BlueWhite_p,   &RainbowColors_p, &FairyLight_p,
     &RedGreenWhite_p, &PartyColors_p, &RedWhite_p,      &Snow_p,
     &Holly_p,         &Ice_p};
-
-// Advance to the next color palette in the list (above).
-void chooseNextColorPalette(CRGBPalette16& pal) {
-  const uint8_t numberOfPalettes =
-      sizeof(ActivePaletteList) / sizeof(ActivePaletteList[0]);
-  static uint8_t whichPalette = -1;
-  whichPalette = addmod8(whichPalette, 1, numberOfPalettes);
-
-  pal = *(ActivePaletteList[whichPalette]);
-}
