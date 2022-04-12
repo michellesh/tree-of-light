@@ -46,7 +46,7 @@ struct Spin {
   }
 
   bool setLED(uint8_t d, uint8_t p) {
-    int16_t angle = incWrap(_angle, d * _offset, 360);
+    int16_t angle = incWrap(_angle, 360, d * _offset);
 
     // If angle is near beginning (0 degrees), also check LEDs near
     // end. If angle is near end (360 degrees), also check LEDs near
