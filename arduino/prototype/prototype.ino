@@ -13,9 +13,11 @@ CRGB *leds;
 #include "Range.h"
 #include "Ripple.h"
 #include "Spin.h"
+#include "Twinkle.h"
 
 Ripple ripple;
 Spin spin;
+Twinkle twinkle;
 
 void setup() {
   Serial.begin(115200);
@@ -47,14 +49,26 @@ void setup() {
     offset += disc.numLEDs;
   }
 
-  FastLED.setBrightness(50);
+  // FastLED.setBrightness(50);
+
+  chooseNextColorPalette(gTargetPalette);
 }
 
 void loop() {
-  spin = spin.width(oscillate(spin.WIDTH.MIN, spin.WIDTH.MAX))
-             .speed(oscillate(spin.SPEED.MAX, spin.SPEED.MIN))
-             .offset(oscillate(spin.OFFSET.MAX, spin.OFFSET.MIN))
-             .show();
+  twinkle = twinkle.show();
+
+  // spin = spin.width(oscillate(spin.WIDTH.MIN, spin.WIDTH.MAX))
+  //            .speed(oscillate(spin.SPEED.MAX, spin.SPEED.MIN))
+  //            .offset(oscillate(spin.OFFSET.MAX, spin.OFFSET.MIN))
+  //            .show();
+
+  EVERY_N_SECONDS(SECONDS_PER_PALETTE) {
+    chooseNextColorPalette(gTargetPalette);
+  }
+
+  EVERY_N_MILLISECONDS(10) {
+    nblendPaletteTowardPalette(gCurrentPalette, gTargetPalette, 12);
+  }
 
   ticks++;
 }
