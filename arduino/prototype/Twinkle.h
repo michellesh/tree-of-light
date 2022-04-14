@@ -1,6 +1,6 @@
 struct Twinkle {
-  Range SPEED = {0, 8, 4};
-  Range DENSITY = {0, 8, 5};
+  Range SPEED = {1, 8, 4};
+  Range DENSITY = {1, 8, 5};
 
   uint8_t _speed = SPEED.DFLT;
   uint8_t _density = DENSITY.DFLT;

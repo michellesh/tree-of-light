@@ -17,8 +17,8 @@ float mapf(float value, float inMin, float inMax, float outMin, float outMax) {
   return outMin + (outMax - outMin) * percentage;
 }
 
-float oscillate(float minValue, float maxValue) {
-  return mapf(sin((float)ticks / 50), -1, 1, minValue, maxValue);
+float oscillate(float minValue, float maxValue, uint8_t waveLength = 50) {
+  return mapf(sin((float)ticks / waveLength), -1, 1, minValue, maxValue);
 }
 
 // This function is like 'triwave8', which produces a

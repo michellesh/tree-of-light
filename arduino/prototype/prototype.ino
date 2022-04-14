@@ -58,12 +58,15 @@ void setup() {
 
 void loop() {
   palette = palette.cycle();
-  twinkle = twinkle.show();
 
-  // spin = spin.width(oscillate(spin.WIDTH.MIN, spin.WIDTH.MAX))
-  //            .speed(oscillate(spin.SPEED.MAX, spin.SPEED.MIN))
-  //            .offset(oscillate(spin.OFFSET.MAX, spin.OFFSET.MIN))
-  //            .show();
+  //ripple = ripple.show();
+
+  //twinkle = twinkle.show();
+
+  spin = spin.width(spin.WIDTH.DFLT)
+             .speed(5)
+             .offset(spin.OFFSET.DFLT)
+             .show();
 
   ticks++;
 }
