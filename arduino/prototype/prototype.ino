@@ -13,11 +13,11 @@ Palette palette;
 CRGB *leds;
 
 #include "Range.h"
-#include "Ripple.h"
+#include "Bloom.h"
 #include "Spin.h"
 #include "Twinkle.h"
 
-Ripple ripple;
+Bloom bloom;
 Spin spin;
 Twinkle twinkle;
 
@@ -51,22 +51,26 @@ void setup() {
     offset += disc.numLEDs;
   }
 
-  // FastLED.setBrightness(50);
+  // Initialize all LEDs to black
+  for (int16_t i = 0; i < NUM_LEDS_TOTAL; i++) {
+    leds[i] = CRGB::Black;
+  }
 
   palette = palette.setNextColorPalette();
+  bloom = bloom.init();
 }
 
 void loop() {
   palette = palette.cycle();
 
-  //ripple = ripple.show();
+  bloom = bloom.show();
 
-  //twinkle = twinkle.show();
+  // twinkle = twinkle.show();
 
-  spin = spin.width(spin.WIDTH.DFLT)
-             .speed(5)
-             .offset(spin.OFFSET.DFLT)
-             .show();
+  // spin = spin.width(spin.WIDTH.DFLT)
+  //            .speed(5)
+  //            .offset(spin.OFFSET.DFLT)
+  //            .show();
 
   ticks++;
 }
