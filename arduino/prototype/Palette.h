@@ -1,13 +1,14 @@
 #define MAX_PALETTE_INDEX 245
-#define CM_VERTICAL_GRADIENT 0
-#define CM_RADIUS_GRADIENT 1
-#define CM_ANGLE_GRADIENT 2
-#define CM_PETAL_GRADIENT 3
+#define CM_SOLID 0
+#define CM_VERTICAL_GRADIENT 1
+#define CM_RADIUS_GRADIENT 2
+#define CM_ANGLE_GRADIENT 3
+#define CM_PETAL_GRADIENT 4
 
 struct Palette {
   CRGBPalette16 currentPalette;
   CRGBPalette16 targetPalette;
-  uint8_t colorMode = CM_PETAL_GRADIENT;
+  uint8_t colorMode = CM_SOLID;
   uint8_t _secondsPerPalette = 30;
 
   Palette setNextColorPalette() {

@@ -70,6 +70,10 @@ void setup() {
 void loop() {
   palette = palette.cycle();
 
+  // Cycle through color modes for demonstration
+  EVERY_N_SECONDS(15) {
+    palette.colorMode = palette.colorMode < 4 ? palette.colorMode + 1 : 0;
+  }
   setAllLEDs();
 
   // bloom = bloom.show();
