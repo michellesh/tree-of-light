@@ -6,11 +6,12 @@
 #include "colors.h"
 #include "utils.h"
 #include "Disc.h"
-#include "Palette.h"
 
 Disc discs[NUM_DISCS];
-Palette palette;
 CRGB *leds;
+
+#include "Palette.h"
+Palette palette;
 
 #include "Range.h"
 #include "Bloom.h"
@@ -63,9 +64,9 @@ void setup() {
 void loop() {
   palette = palette.cycle();
 
-  bloom = bloom.show();
+  // bloom = bloom.show();
 
-  // twinkle = twinkle.show();
+  twinkle = twinkle.show();
 
   // spin = spin.width(spin.WIDTH.DFLT)
   //            .speed(5)
