@@ -1,3 +1,4 @@
+#define MAX_PALETTE_INDEX 245
 #define CM_VERTICAL_GRADIENT 0
 #define CM_RADIUS_GRADIENT 1
 #define CM_ANGLE_GRADIENT 2
@@ -6,7 +7,7 @@
 struct Palette {
   CRGBPalette16 currentPalette;
   CRGBPalette16 targetPalette;
-  uint8_t colorMode = CM_ANGLE_GRADIENT;
+  uint8_t colorMode = CM_PETAL_GRADIENT;
   uint8_t _secondsPerPalette = 30;
 
   Palette setNextColorPalette() {
@@ -31,23 +32,35 @@ struct Palette {
   }
 
   CRGB getColor(uint8_t d, uint8_t p) {
+    uint8_t paletteIndex = 0;
     switch (colorMode) {
       case CM_VERTICAL_GRADIENT: {
-        uint8_t index = map(d, 0, NUM_DISCS - 1, 0, 255);
-        return ColorFromPalette(currentPalette, index);
+        paletteIndex = map(d, 0, NUM_DISCS - 1, 0, MAX_PALETTE_INDEX);
+        break;
       }
       case CM_RADIUS_GRADIENT: {
-        uint8_t index = map(discs[d].radius(p), 0, discs[d].maxRadius, 0, 255);
-        return ColorFromPalette(currentPalette, index);
+        paletteIndex = map(discs[d].radius(p), 0, discs[d].maxRadius, 0,
+                           MAX_PALETTE_INDEX);
+        break;
       }
       case CM_ANGLE_GRADIENT: {
-        uint8_t index = map(discs[d].angle(p), 0, 360, 0, 255);
-        return ColorFromPalette(currentPalette, index);
+        paletteIndex = map(discs[d].angle(p), 0, 360, 0, MAX_PALETTE_INDEX);
+        break;
       }
-      case CM_PETAL_GRADIENT:
-        return campfire[d];  // TODO
+      case CM_PETAL_GRADIENT: {
+        if (discs[d].isInner(p)) {
+          paletteIndex = map(discs[d].petalIndex(p), 0,
+                             discs[d].numLEDsP1 + discs[d].numLEDsP2 - 1, 0,
+                             MAX_PALETTE_INDEX / 2);
+        } else {
+          paletteIndex = map(discs[d].petalIndex(p), 0, discs[d].numLEDsP3 - 1,
+                             MAX_PALETTE_INDEX, MAX_PALETTE_INDEX / 2);
+        }
+        break;
+      }
       default:
-        return campfire[d];  // TODO
+        break;
     }
+    return ColorFromPalette(currentPalette, paletteIndex);
   }
 };

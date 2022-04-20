@@ -45,7 +45,13 @@ void setup() {
 
   uint16_t offset = 0;
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    Disc disc = {d, NUM_LEDS_DISC[d], offset, &leds[offset],
+    Disc disc = {d,
+                 NUM_LEDS_DISC[d],
+                 NUM_LEDS_PETAL[d][0],
+                 NUM_LEDS_PETAL[d][1],
+                 NUM_LEDS_PETAL[d][2],
+                 offset,
+                 &leds[offset],
                  MAX_RADIUS_DISC[d]};
 
     discs[d] = disc;
@@ -64,9 +70,11 @@ void setup() {
 void loop() {
   palette = palette.cycle();
 
+  setAllLEDs();
+
   // bloom = bloom.show();
 
-  twinkle = twinkle.show();
+  // twinkle = twinkle.show();
 
   // spin = spin.width(spin.WIDTH.DFLT)
   //            .speed(5)
@@ -74,4 +82,14 @@ void loop() {
   //            .show();
 
   ticks++;
+}
+
+void setAllLEDs() {
+  FastLED.setBrightness(50);
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
+      discs[d].leds[p] = palette.getColor(d, p);
+    }
+  }
+  FastLED.show();
 }
