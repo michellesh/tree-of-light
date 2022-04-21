@@ -73,9 +73,9 @@ void loop() {
   // EVERY_N_SECONDS(15) {
   //  palette.colorMode = palette.colorMode < 4 ? palette.colorMode + 1 : 0;
   //}
-  // setAllLEDs();
+  setAllLEDs();
 
-  bloom = bloom.show();
+  // bloom = bloom.show();
 
   // twinkle = twinkle.show();
 
@@ -92,6 +92,7 @@ void setAllLEDs() {
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
     for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
       discs[d].leds[p] = palette.getColor(d, p);
+      // discs[d].leds[p] = campfire[d];
     }
   }
   FastLED.show();

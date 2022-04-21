@@ -9,7 +9,7 @@ struct Palette {
   CRGBPalette16 currentPalette = *(activePalettes[0]);
   CRGBPalette16 targetPalette = *(activePalettes[0]);
   uint8_t colorMode = CM_VERTICAL_GRADIENT;
-  uint8_t _secondsPerPalette = 30;
+  uint8_t _secondsPerPalette = 10;
 
   Palette setNextColorPalette() {
     const uint8_t numberOfPalettes =
