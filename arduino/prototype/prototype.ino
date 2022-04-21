@@ -91,7 +91,7 @@ void setAllLEDs() {
   FastLED.setBrightness(50);
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
     for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
-      discs[d].leds[p] = palette.getColor(d, p);
+      discs[d].leds[p] = palette.getColor(d, p, true);
       // discs[d].leds[p] = campfire[d];
     }
   }

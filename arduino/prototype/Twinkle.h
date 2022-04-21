@@ -57,7 +57,7 @@ struct Twinkle {
         ((slowcycle8 & 0x0E) / 2) < _density ? attackDecayWave8(fastcycle8) : 0;
     uint8_t hue = slowcycle8 - salt;
 
-    CRGB color = palette.getColor(d, p);
+    CRGB color = palette.getPixelColor(hue);
     return bright > 0 ? color.nscale8(bright) : CRGB::Black;
   }
 };

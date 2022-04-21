@@ -4,10 +4,10 @@ CRGB campfire[] = {
     CRGB::Chocolate,   CRGB::Coral,     CRGB::Lavender,
 };
 
-DEFINE_GRADIENT_PALETTE(_firePalette){0,   0,   0,   0,     // black
-                                      128, 255, 0,   0,     // red
-                                      224, 255, 255, 0,     // bright yellow
-                                      255, 255, 255, 255};  // full white
+DEFINE_GRADIENT_PALETTE(_firePalette){0,   0,   0,   0,   // black
+                                      128, 255, 0,   0,   // red
+                                      200, 255, 140, 0,   // CRGB::Orange
+                                      255, 255, 215, 0};  // CRGB::Gold
 CRGBPalette16 firePalette = _firePalette;
 
 DEFINE_GRADIENT_PALETTE(_tealGreenGold){0,   34,  139, 34,  // CRGB::ForestGreen
@@ -34,5 +34,12 @@ DEFINE_GRADIENT_PALETTE(_fairyPalette){0,   63,  57,  11,    // "QuarterFairy"
                                        255, 255, 255, 255};  // full white
 CRGBPalette16 fairyPalette = _fairyPalette;
 
-CRGBPalette16* activePalettes[] = {&tealGreenGold, &redRoseLavendar,
-                                   &firePalette, &icePalette, &fairyPalette};
+// clang-format off
+CRGBPalette16* activePalettes[] = {
+  &tealGreenGold,
+  &redRoseLavendar,
+  &firePalette,
+  &icePalette,
+  &fairyPalette
+};
+// clang-format on

@@ -32,12 +32,16 @@ struct Palette {
     return *this;
   }
 
+  CRGB getPixelColor(uint8_t p) {
+    return ColorFromPalette(currentPalette, p);
+  }
+
   CRGB getColor(uint8_t d) {
     uint8_t paletteIndex = map(d, 0, NUM_DISCS - 1, 0, MAX_PALETTE_INDEX);
     return ColorFromPalette(currentPalette, paletteIndex);
   }
 
-  CRGB getColor(uint8_t d, uint8_t p) {
+  CRGB getColor(uint8_t d, uint8_t p, bool reversePalette = false) {
     uint8_t paletteIndex = 0;
     switch (colorMode) {
       case CM_VERTICAL_GRADIENT: {
@@ -66,6 +70,9 @@ struct Palette {
       }
       default:
         break;
+    }
+    if (reversePalette) {
+      paletteIndex = MAX_PALETTE_INDEX - paletteIndex;
     }
     return ColorFromPalette(currentPalette, paletteIndex);
   }
