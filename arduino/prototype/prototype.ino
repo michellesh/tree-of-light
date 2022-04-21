@@ -64,19 +64,19 @@ void setup() {
   }
 
   palette = palette.setNextColorPalette();
-  bloom = bloom.init();
+  bloom = bloom.initDownward();
 }
 
 void loop() {
   palette = palette.cycle();
 
   // Cycle through color modes for demonstration
-  EVERY_N_SECONDS(15) {
-    palette.colorMode = palette.colorMode < 4 ? palette.colorMode + 1 : 0;
-  }
-  setAllLEDs();
+  //EVERY_N_SECONDS(15) {
+  //  palette.colorMode = palette.colorMode < 4 ? palette.colorMode + 1 : 0;
+  //}
+  //setAllLEDs();
 
-  // bloom = bloom.show();
+  bloom = bloom.show();
 
   // twinkle = twinkle.show();
 

@@ -1,13 +1,22 @@
 struct Ripple {
   uint8_t discIndex;
   float radius;
+  bool continuous;
   CRGB color;
+
+  float maxRadius() { return MAX_RADIUS_DISC[continuous ? discIndex : 0]; }
+
+  void incDiscIndex() {
+    if (continuous) {
+      discIndex = discIndex == 0 ? NUM_DISCS - 1 : discIndex - 1;
+    }
+  }
 
   void incRadius(int16_t speed, int16_t width) {
     radius += speed;
-    if (radius >= MAX_RADIUS_DISC[discIndex] + width) {
+    if (radius >= maxRadius() + width) {
       radius = -width;
-      discIndex = discIndex == 0 ? NUM_DISCS - 1 : discIndex - 1;
+      incDiscIndex();
     }
   }
 
@@ -36,13 +45,23 @@ struct Bloom {
   int16_t _width = WIDTH.DFLT;
   int16_t _speed = SPEED.DFLT;
 
-  Bloom init() {
+  Bloom init(float offset = 0, bool continuous = true) {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      Ripple r = {d, -_width, campfire[d]};
+      Ripple r = {d, -_width + (d * offset), continuous, campfire[d]};
       _ripples[d] = r;
     }
     return *this;
   }
+
+  Bloom initContinuous() { return init(); }
+
+  Bloom initStartSame() { return init(0, false); }
+
+  Bloom initEndSame() { return init(-_width / 2, false); }
+
+  Bloom initUpward() { return init(_width / 2, false); }
+
+  Bloom initDownward() { return init(-_width, false); }
 
   Bloom width(int16_t width) {
     _width = width;
