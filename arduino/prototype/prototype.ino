@@ -63,7 +63,6 @@ void setup() {
     leds[i] = CRGB::Black;
   }
 
-  palette = palette.setNextColorPalette();
   bloom = bloom.initDownward();
 }
 
@@ -71,10 +70,10 @@ void loop() {
   palette = palette.cycle();
 
   // Cycle through color modes for demonstration
-  //EVERY_N_SECONDS(15) {
+  // EVERY_N_SECONDS(15) {
   //  palette.colorMode = palette.colorMode < 4 ? palette.colorMode + 1 : 0;
   //}
-  //setAllLEDs();
+  // setAllLEDs();
 
   bloom = bloom.show();
 

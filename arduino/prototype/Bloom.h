@@ -1,8 +1,8 @@
 struct Ripple {
+  uint8_t rippleIndex;
   uint8_t discIndex;
   float radius;
   bool continuous;
-  CRGB color;
 
   float maxRadius() { return MAX_RADIUS_DISC[continuous ? discIndex : 0]; }
 
@@ -28,7 +28,7 @@ struct Ripple {
         if (fade > 245) {
           discs[discIndex].leds[p] = CRGB::Black;
         } else {
-          discs[discIndex].leds[p] = color;
+          discs[discIndex].leds[p] = palette.getColor(rippleIndex);
           discs[discIndex].leds[p].nscale8(255 - fade);
         }
       }
@@ -47,7 +47,7 @@ struct Bloom {
 
   Bloom init(float offset = 0, bool continuous = true) {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      Ripple r = {d, -_width + (d * offset), continuous, campfire[d]};
+      Ripple r = {d, d, -_width + (d * offset), continuous};
       _ripples[d] = r;
     }
     return *this;

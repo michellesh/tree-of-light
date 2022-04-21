@@ -6,9 +6,9 @@
 #define CM_PETAL_GRADIENT 4
 
 struct Palette {
-  CRGBPalette16 currentPalette;
-  CRGBPalette16 targetPalette;
-  uint8_t colorMode = CM_SOLID;
+  CRGBPalette16 currentPalette = *(activePalettes[0]);
+  CRGBPalette16 targetPalette = *(activePalettes[0]);
+  uint8_t colorMode = CM_VERTICAL_GRADIENT;
   uint8_t _secondsPerPalette = 30;
 
   Palette setNextColorPalette() {
@@ -30,6 +30,11 @@ struct Palette {
     }
 
     return *this;
+  }
+
+  CRGB getColor(uint8_t d) {
+    uint8_t paletteIndex = map(d, 0, NUM_DISCS - 1, 0, MAX_PALETTE_INDEX);
+    return ColorFromPalette(currentPalette, paletteIndex);
   }
 
   CRGB getColor(uint8_t d, uint8_t p) {

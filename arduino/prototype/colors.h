@@ -16,5 +16,5 @@ DEFINE_GRADIENT_PALETTE(campfirePaletteGP){
     255, campfire[4].r, campfire[4].g, campfire[4].b};
 CRGBPalette16 campfirePalette = campfirePaletteGP;
 
-//CRGBPalette16* activePalettes[] = {&campfirePalette, &heatmapPalette};
-CRGBPalette16* activePalettes[] = {&campfirePalette};
+CRGBPalette16* activePalettes[] = {&campfirePalette, &heatmapPalette};
+//CRGBPalette16* activePalettes[] = {&campfirePalette};
