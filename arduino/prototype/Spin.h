@@ -61,7 +61,7 @@ struct Spin {
   bool _setLED(uint8_t d, uint8_t p, int16_t angle) {
     int16_t dist = abs(angle - discs[d].angle(p));
     if (dist < _width) {
-      discs[d].leds[p] = campfire[d];
+      discs[d].leds[p] = palette.getColor(d, p);
       discs[d].leds[p].fadeLightBy(map(dist, 0, _width, 0, 255));
       return true;
     }

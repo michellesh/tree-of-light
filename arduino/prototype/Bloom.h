@@ -1,10 +1,10 @@
 struct Ripple {
   uint8_t rippleIndex;
   uint8_t discIndex;
-  float radius;
+  int16_t radius;
   bool continuous;
 
-  float maxRadius() { return MAX_RADIUS_DISC[continuous ? discIndex : 0]; }
+  int16_t maxRadius() { return MAX_RADIUS_DISC[continuous ? discIndex : 0]; }
 
   void incDiscIndex() {
     if (continuous) {
@@ -45,7 +45,7 @@ struct Bloom {
   int16_t _width = WIDTH.DFLT;
   int16_t _speed = SPEED.DFLT;
 
-  Bloom init(float offset = 0, bool continuous = true) {
+  Bloom init(int16_t offset = 0, bool continuous = true) {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
       Ripple r = {d, d, -_width + (d * offset), continuous};
       _ripples[d] = r;

@@ -63,19 +63,19 @@ void setup() {
     leds[i] = CRGB::Black;
   }
 
-  bloom = bloom.initDownward();
+  bloom = bloom.initStartSame();
 }
+
+int bloomType = 0;
 
 void loop() {
   palette = palette.cycle();
 
-  // Cycle through color modes for demonstration
-  // EVERY_N_SECONDS(15) {
-  //  palette.colorMode = palette.colorMode < 4 ? palette.colorMode + 1 : 0;
-  //}
-  setAllLEDs();
+  // cyclePalettes();
+  // showPalette();
+  cycleBloomTypes();
 
-  // bloom = bloom.show();
+  //bloom = bloom.show();
 
   // twinkle = twinkle.show();
 
@@ -87,7 +87,38 @@ void loop() {
   ticks++;
 }
 
-void setAllLEDs() {
+void cycleBloomTypes() {
+  EVERY_N_SECONDS(10) {
+    bloomType++;
+    if (bloomType >= 5) {
+      bloomType = 0;
+    }
+    if (bloomType == 0) {
+      bloom = bloom.initStartSame();
+    } else if (bloomType == 1) {
+      bloom = bloom.initUpward();
+    } else if (bloomType == 2) {
+      bloom = bloom.initDownward();
+    } else if (bloomType == 3) {
+      bloom = bloom.initEndSame();
+    } else {
+      bloom = bloom.initContinuous();
+    }
+  }
+
+  bloom = bloom.show();
+}
+
+void cyclePalettes() {
+  // Cycle through color modes for demonstration
+  EVERY_N_SECONDS(15) {
+    palette.colorMode = palette.colorMode < 4 ? palette.colorMode + 1 : 0;
+  }
+
+  showPalette();
+}
+
+void showPalette() {
   FastLED.setBrightness(50);
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
     for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
