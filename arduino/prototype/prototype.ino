@@ -73,9 +73,9 @@ void loop() {
 
   // cyclePalettes();
   // showPalette();
-  cycleBloomTypes();
+  // cycleBloomTypes();
 
-  //bloom = bloom.show();
+  bloom = bloom.show();
 
   // twinkle = twinkle.show();
 
