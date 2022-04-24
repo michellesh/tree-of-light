@@ -35,7 +35,8 @@ uint8_t exp(uint8_t x, uint8_t p, int div) {
 
 uint8_t max(uint8_t val1, uint8_t val2) { return val1 < val2 ? val2 : val1; }
 
-bool isBetween(int16_t value, int16_t min, int16_t max, bool inclusive = false) {
+bool isBetween(int16_t value, int16_t min, int16_t max,
+               bool inclusive = false) {
   return inclusive ? value >= min && value <= max : value > min && value < max;
 }
 
@@ -95,7 +96,8 @@ struct Ripple {
         uint8_t brightness = mapDistToBrightness(map(dist, 0, width, 0, 255));
         discs[discIndex].leds[p] = palette.getColor(rippleIndex);
         discs[discIndex].leds[p].nscale8(brightness);
-      } else if (isBetween(dist, -20, 0) || isBetween(dist, width, width + 20)) {
+      } else if (isBetween(dist, -20, 0) ||
+                 isBetween(dist, width, width + 20)) {
         // this just ensures that the pixels go back to black after the ripple
         // has passed by. The 10 will probably need to be adjusted to account
         // for different speeds
@@ -132,8 +134,8 @@ struct Bloom {
 
   Bloom initDownward() { return init(-40, false); }
 
-  Bloom reverse(bool reverse = true) {
-    _speed = _speed < 0 ? _speed : -_speed;
+  Bloom reverse() {
+    _speed = _speed * -1;
     return *this;
   }
 

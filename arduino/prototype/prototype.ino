@@ -63,7 +63,7 @@ void setup() {
     leds[i] = CRGB::Black;
   }
 
-  bloom = bloom.reverse().initContinuous();
+  bloom = bloom.initContinuous();
 }
 
 int bloomType = 0;
@@ -76,6 +76,8 @@ void loop() {
   // cycleBloomTypes();
 
   bloom = bloom.show();
+
+  EVERY_N_MILLISECONDS(1500) { bloom = bloom.reverse(); }
 
   // twinkle = twinkle.show();
 
