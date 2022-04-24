@@ -5,7 +5,8 @@
 #define FADE_EXP2_SYM 4
 #define FADE_EXP3_SYM 5
 #define FADE_EXP4_SYM 6
-#define FADE_DOUBLE_LINEAR_SYM 7
+#define FADE_CUSTOM 7
+
 #define MIN_FADE 10
 
 struct XY {
@@ -34,9 +35,13 @@ uint8_t exp(uint8_t x, uint8_t p, int div) {
 
 uint8_t max(uint8_t val1, uint8_t val2) { return val1 < val2 ? val2 : val1; }
 
-uint8_t mapDistToBrightness(uint8_t x, uint8_t mode = FADE_DOUBLE_LINEAR_SYM) {
+bool isBetween(int16_t value, int16_t min, int16_t max, bool inclusive = false) {
+  return inclusive ? value >= min && value <= max : value > min && value < max;
+}
+
+uint8_t mapDistToBrightness(uint8_t x, uint8_t mode = FADE_CUSTOM) {
   switch (mode) {
-    case FADE_DOUBLE_LINEAR_SYM:
+    case FADE_CUSTOM:
       return fadeShape(x, {60, 20});
     case FADE_EXP4_SYM:
       return max(MIN_FADE, exp(x, 4, 1050000));
@@ -50,8 +55,10 @@ uint8_t mapDistToBrightness(uint8_t x, uint8_t mode = FADE_DOUBLE_LINEAR_SYM) {
       return x < 127 ? x * 2 : 255 - (2 * (x - 128));
     case FADE_LINEAR_REVERSE:
       return 255 - x;
-    default:  // FADE_LINEAR
+    case FADE_LINEAR:
       return x;
+    default:  // no fade, square shape
+      return 255;
   }
 }
 
@@ -61,35 +68,38 @@ struct Ripple {
   int16_t radius;
   bool continuous;
 
-  int16_t maxRadius() { return MAX_RADIUS_DISC[continuous ? discIndex : 0]; }
+  int16_t maxRadius() {
+    return MAX_RADIUS_DISC[continuous ? discIndex : 0] + 5;
+  }
 
-  void incDiscIndex() {
+  void updateDiscIndex(int8_t amount) {
     if (continuous) {
-      discIndex = discIndex == 0 ? NUM_DISCS - 1 : discIndex - 1;
+      discIndex = (discIndex + amount) % NUM_DISCS;
     }
   }
 
-  void incRadius(int16_t speed, int16_t width) {
-    radius += speed;
-    if (radius >= maxRadius() + width) {
-      radius = -width;
-      incDiscIndex();
+  void updateRadius(int16_t speed, int16_t width) {
+    int16_t newRadius = radius + speed;
+    radius = (newRadius + maxRadius() + width) % (maxRadius() + width);
+    if (speed < 0 && newRadius < 0) {
+      updateDiscIndex(-1 + NUM_DISCS);
+    } else if (speed > 0 && newRadius >= maxRadius() + width) {
+      updateDiscIndex(1);
     }
   }
 
   void show(int16_t width) {
     for (uint8_t p = 0; p < discs[discIndex].numLEDs; p++) {
-      int16_t dist = discs[discIndex].radius(p) - radius;
-      // this just ensures that the pixels go back to black after the ripple has
-      // passed by. The 10 will probably need to be adjusted to account for
-      // different speeds
-      if (dist < 0 && dist > -10) {
-        discs[discIndex].leds[p] = CRGB::Black;
-      }
+      int16_t dist = radius - discs[discIndex].radius(p);
       if (dist > 0 && dist < width) {
         uint8_t brightness = mapDistToBrightness(map(dist, 0, width, 0, 255));
         discs[discIndex].leds[p] = palette.getColor(rippleIndex);
         discs[discIndex].leds[p].nscale8(brightness);
+      } else if (isBetween(dist, -20, 0) || isBetween(dist, width, width + 20)) {
+        // this just ensures that the pixels go back to black after the ripple
+        // has passed by. The 10 will probably need to be adjusted to account
+        // for different speeds
+        discs[discIndex].leds[p] = CRGB::Black;
       }
     }
   }
@@ -97,7 +107,7 @@ struct Ripple {
 
 struct Bloom {
   Range WIDTH = {20, 255, 150};
-  Range SPEED = {1, 8, 1};
+  Range SPEED = {1, 8, 3};
 
   Ripple _ripples[NUM_DISCS];
 
@@ -106,7 +116,7 @@ struct Bloom {
 
   Bloom init(int16_t offset = 0, bool continuous = true) {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      Ripple r = {d, d, -_width + (d * offset), continuous};
+      Ripple r = {d, d, d * offset, continuous};
       _ripples[d] = r;
     }
     return *this;
@@ -116,11 +126,16 @@ struct Bloom {
 
   Bloom initStartSame() { return init(0, false); }
 
-  Bloom initEndSame() { return init(-_width / 2, false); }
+  Bloom initEndSame() { return init(-20, false); }
 
-  Bloom initUpward() { return init(_width / 2, false); }
+  Bloom initUpward() { return init(20, false); }
 
-  Bloom initDownward() { return init(-_width, false); }
+  Bloom initDownward() { return init(-40, false); }
+
+  Bloom reverse(bool reverse = true) {
+    _speed = _speed < 0 ? _speed : -_speed;
+    return *this;
+  }
 
   Bloom width(int16_t width) {
     _width = width;
@@ -135,7 +150,7 @@ struct Bloom {
   Bloom show() {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
       _ripples[d].show(_width);
-      _ripples[d].incRadius(_speed, _width);
+      _ripples[d].updateRadius(_speed, _width);
     }
     FastLED.show();
     return *this;

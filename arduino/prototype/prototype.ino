@@ -63,7 +63,7 @@ void setup() {
     leds[i] = CRGB::Black;
   }
 
-  bloom = bloom.initStartSame();
+  bloom = bloom.reverse().initContinuous();
 }
 
 int bloomType = 0;
