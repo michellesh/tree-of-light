@@ -96,8 +96,8 @@ struct Ripple {
         uint8_t brightness = mapDistToBrightness(map(dist, 0, width, 0, 255));
         discs[discIndex].leds[p] = palette.getColor(rippleIndex);
         discs[discIndex].leds[p].nscale8(brightness);
-      } else if (isBetween(dist, -20, 0) ||
-                 isBetween(dist, width, width + 20)) {
+      } else if (isBetween(dist, -10, 0) ||
+                 isBetween(dist, width, width + 10)) {
         // this just ensures that the pixels go back to black after the ripple
         // has passed by. The 10 will probably need to be adjusted to account
         // for different speeds
@@ -108,17 +108,19 @@ struct Ripple {
 };
 
 struct Bloom {
-  Range WIDTH = {20, 255, 150};
+  Range WIDTH = {20, 255, 100};
   Range SPEED = {1, 8, 3};
+  Range OFFSET = {0, 255, 0};
 
   Ripple _ripples[NUM_DISCS];
 
   int16_t _width = WIDTH.DFLT;
   int16_t _speed = SPEED.DFLT;
+  int16_t _offset = OFFSET.DFLT;
 
-  Bloom init(int16_t offset = 0, bool continuous = true) {
+  Bloom init(int16_t discOffset = 0, bool continuous = true) {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      Ripple r = {d, d, d * offset, continuous};
+      Ripple r = {d, d, d * discOffset + _offset, continuous};
       _ripples[d] = r;
     }
     return *this;
@@ -133,6 +135,11 @@ struct Bloom {
   Bloom initUpward() { return init(20, false); }
 
   Bloom initDownward() { return init(-40, false); }
+
+  Bloom offset(int16_t offset) {
+    _offset = offset;
+    return *this;
+  }
 
   Bloom reverse() {
     _speed = _speed * -1;
@@ -154,7 +161,6 @@ struct Bloom {
       _ripples[d].show(_width);
       _ripples[d].updateRadius(_speed, _width);
     }
-    FastLED.show();
     return *this;
   }
 };

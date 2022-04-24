@@ -18,7 +18,7 @@ Palette palette;
 #include "Spin.h"
 #include "Twinkle.h"
 
-Bloom bloom;
+Bloom bloom, bloom2;
 Spin spin;
 Twinkle twinkle;
 
@@ -63,7 +63,9 @@ void setup() {
     leds[i] = CRGB::Black;
   }
 
-  bloom = bloom.initContinuous();
+  bloom = bloom.initDownward();
+  bloom2 =
+      bloom2.offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2).initDownward();
 }
 
 int bloomType = 0;
@@ -76,8 +78,12 @@ void loop() {
   // cycleBloomTypes();
 
   bloom = bloom.show();
+  bloom2 = bloom2.show();
 
-  EVERY_N_MILLISECONDS(1500) { bloom = bloom.reverse(); }
+  EVERY_N_MILLISECONDS(1000) {
+    bloom = bloom.reverse();
+    bloom2 = bloom2.reverse();
+  }
 
   // twinkle = twinkle.show();
 
@@ -86,6 +92,7 @@ void loop() {
   //            .offset(spin.OFFSET.DFLT)
   //            .show();
 
+  FastLED.show();
   ticks++;
 }
 
