@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "colors.h"
 #include "utils.h"
+#include "fade.h"
 #include "Disc.h"
 
 Disc discs[NUM_DISCS];
@@ -68,7 +69,7 @@ void setup() {
       bloom2.offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2).initDownward();
 
   spiral2 = spiral2.id(2).offset(120).reverse();
-  spiral3 = spiral3.id(3).offset(240);
+  //spiral3 = spiral3.id(3).offset(240);
 }
 
 int bloomType = 0;
@@ -92,12 +93,12 @@ void loop() {
 
   spiral = spiral.show();
   spiral2 = spiral2.show();
-  spiral3 = spiral3.show();
+  //spiral3 = spiral3.show();
 
   EVERY_N_MILLISECONDS(5000) {
     spiral = spiral.reverse();
     spiral2 = spiral2.reverse();
-    spiral3 = spiral3.reverse();
+    //spiral3 = spiral3.reverse();
   }
 
   FastLED.show();
