@@ -15,11 +15,11 @@ Palette palette;
 
 #include "Range.h"
 #include "Bloom.h"
-#include "Spin.h"
+#include "Spiral.h"
 #include "Twinkle.h"
 
 Bloom bloom, bloom2;
-Spin spin;
+Spiral spiral;
 Twinkle twinkle;
 
 void setup() {
@@ -77,20 +77,20 @@ void loop() {
   // showPalette();
   // cycleBloomTypes();
 
-  bloom = bloom.show();
-  bloom2 = bloom2.show();
+  // bloom = bloom.show();
+  // bloom2 = bloom2.show();
 
-  EVERY_N_MILLISECONDS(1000) {
-    bloom = bloom.reverse();
-    bloom2 = bloom2.reverse();
-  }
+  // EVERY_N_MILLISECONDS(1000) {
+  //   bloom = bloom.reverse();
+  //   bloom2 = bloom2.reverse();
+  // }
 
   // twinkle = twinkle.show();
 
-  // spin = spin.width(spin.WIDTH.DFLT)
-  //            .speed(5)
-  //            .offset(spin.OFFSET.DFLT)
-  //            .show();
+  spiral = spiral.width(spiral.WIDTH.DFLT)
+               .speed(5)
+               .offset(spiral.OFFSET.DFLT)
+               .show();
 
   FastLED.show();
   ticks++;

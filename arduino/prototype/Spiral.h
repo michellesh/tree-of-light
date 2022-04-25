@@ -1,4 +1,4 @@
-struct Spin {
+struct Spiral {
   Range WIDTH = {30, 90, 30};   // How many degrees along the circumference at
                                 // the current angle to light up
   Range SPEED = {3, 12, 4};     // How many degrees to add to the current
@@ -11,22 +11,22 @@ struct Spin {
   int16_t _speed = SPEED.DFLT;
   int16_t _offset = OFFSET.DFLT;
 
-  Spin width(int16_t width) {
+  Spiral width(int16_t width) {
     _width = width;
     return *this;
   }
 
-  Spin speed(int16_t speed) {
+  Spiral speed(int16_t speed) {
     _speed = speed;
     return *this;
   }
 
-  Spin offset(int16_t offset) {
+  Spiral offset(int16_t offset) {
     _offset = offset;
     return *this;
   }
 
-  Spin show() {
+  Spiral show() {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
       for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
         // Set the LED color if its in range of the current angle
