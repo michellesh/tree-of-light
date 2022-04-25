@@ -1,7 +1,7 @@
 struct Spiral {
   Range WIDTH = {30, 90, 30};   // How many degrees along the circumference at
                                 // the current angle to light up
-  Range SPEED = {3, 12, 4};     // How many degrees to add to the current
+  Range SPEED = {3, 12, 5};     // How many degrees to add to the current
                                 // angle each time
   Range OFFSET = {20, 90, 30};  // How many degrees to increase angle per disc
                                 // higher = tighter spiral
@@ -26,6 +26,11 @@ struct Spiral {
     return *this;
   }
 
+  Spiral reverse() {
+    _speed = _speed * -1;
+    return *this;
+  }
+
   Spiral show() {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
       for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
@@ -39,14 +44,14 @@ struct Spiral {
     }
 
     // Increment the angle. After 360 degrees, start over at 0 degrees
-    _angle = incWrap(_angle, 360, _speed);
+    _angle = (_angle + _speed + 360) % 360;
 
     FastLED.show();
     return *this;
   }
 
   bool setLED(uint8_t d, uint8_t p) {
-    int16_t angle = incWrap(_angle, 360, d * _offset);
+    int16_t angle = (_angle + d * _offset + 360) % 360;
 
     // If angle is near beginning (0 degrees), also check LEDs near
     // end. If angle is near end (360 degrees), also check LEDs near

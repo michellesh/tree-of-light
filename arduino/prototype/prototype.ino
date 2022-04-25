@@ -87,10 +87,9 @@ void loop() {
 
   // twinkle = twinkle.show();
 
-  spiral = spiral.width(spiral.WIDTH.DFLT)
-               .speed(5)
-               .offset(spiral.OFFSET.DFLT)
-               .show();
+  spiral = spiral.show();
+
+  EVERY_N_MILLISECONDS(5000) { spiral = spiral.reverse(); }
 
   FastLED.show();
   ticks++;
