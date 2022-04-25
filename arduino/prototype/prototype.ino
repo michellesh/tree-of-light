@@ -19,7 +19,7 @@ Palette palette;
 #include "Twinkle.h"
 
 Bloom bloom, bloom2;
-Spiral spiral;
+Spiral spiral, spiral2, spiral3;
 Twinkle twinkle;
 
 void setup() {
@@ -66,6 +66,9 @@ void setup() {
   bloom = bloom.initDownward();
   bloom2 =
       bloom2.offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2).initDownward();
+
+  spiral2 = spiral2.id(2).offset(120).reverse();
+  spiral3 = spiral3.id(3).offset(240);
 }
 
 int bloomType = 0;
@@ -88,8 +91,14 @@ void loop() {
   // twinkle = twinkle.show();
 
   spiral = spiral.show();
+  spiral2 = spiral2.show();
+  spiral3 = spiral3.show();
 
-  EVERY_N_MILLISECONDS(5000) { spiral = spiral.reverse(); }
+  EVERY_N_MILLISECONDS(5000) {
+    spiral = spiral.reverse();
+    spiral2 = spiral2.reverse();
+    spiral3 = spiral3.reverse();
+  }
 
   FastLED.show();
   ticks++;
