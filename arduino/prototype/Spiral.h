@@ -1,7 +1,7 @@
 struct Spiral {
-  Range WIDTH = {10, 90, 50};  // How many degrees along the circumference at
+  Range WIDTH = {10, 90, 70};  // How many degrees along the circumference at
                                // the current angle to light up
-  Range SPEED = {1, 10, 1};    // How many degrees to add to the current
+  Range SPEED = {1, 10, 4};    // How many degrees to add to the current
                                // angle each time
   Range DISC_OFFSET = {20, 90, 30};  // How many degrees to increase angle per
                                      // disc higher = tighter spiral
@@ -71,10 +71,15 @@ struct Spiral {
     int16_t dist = angle - discs[d].angle(p);
     if (dist > 0 && dist < _width) {
       uint8_t brightness = mapDistToBrightness(map(dist, 0, _width, 0, 255));
-      discs[d].leds[p] = palette.getColor(_id).nscale8(brightness);
+      if (_speed < 3 && brightness < 5) {
+        brightness = 0;
+      }
+      //discs[d].leds[p] = palette.getColor(_id).nscale8(brightness);
+      discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
       return true;
     }
-    if (isBetween(dist, -10, 0) || isBetween(dist, _width, _width + 10)) {
+    if (_speed >= 3 && isBetween(dist, -10, 0) ||
+        isBetween(dist, _width, _width + 10)) {
       discs[d].leds[p] = CRGB::Black;
       return true;
     }
