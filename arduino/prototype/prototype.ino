@@ -68,8 +68,9 @@ void setup() {
   bloom2 =
       bloom2.offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2).initDownward();
 
-  spiral2 = spiral2.id(2).offset(90);
-  //spiral3 = spiral3.id(3).offset(240);
+  spiral2 = spiral2.id(2).discOffset(-30).reverse().radiusRangePercent(50, 100);
+  spiral = spiral.radiusRangePercent(50, 100);
+  // spiral3 = spiral3.id(3).offset(240);
 }
 
 int bloomType = 0;
@@ -91,14 +92,14 @@ void loop() {
 
   // twinkle = twinkle.show();
 
+  spiral2 = spiral2.show();
   spiral = spiral.show();
-  //spiral2 = spiral2.show();
-  //spiral3 = spiral3.show();
+  // spiral3 = spiral3.show();
 
   EVERY_N_MILLISECONDS(5000) {
-    //spiral = spiral.reverse();
-    //spiral2 = spiral2.reverse();
-    //spiral3 = spiral3.reverse();
+    spiral = spiral.reverse();
+    spiral2 = spiral2.reverse();
+    // spiral3 = spiral3.reverse();
   }
 
   FastLED.show();

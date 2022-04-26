@@ -1,7 +1,7 @@
 struct Spiral {
   Range WIDTH = {10, 90, 70};  // How many degrees along the circumference at
                                // the current angle to light up
-  Range SPEED = {1, 10, 4};    // How many degrees to add to the current
+  Range SPEED = {1, 10, 2};    // How many degrees to add to the current
                                // angle each time
   Range DISC_OFFSET = {20, 90, 30};  // How many degrees to increase angle per
                                      // disc higher = tighter spiral
@@ -11,6 +11,8 @@ struct Spiral {
   int16_t _width = WIDTH.DFLT;
   int16_t _speed = SPEED.DFLT;
   int16_t _discOffset = DISC_OFFSET.DFLT;
+  uint8_t _minRadiusPercent = 0;
+  uint8_t _maxRadiusPercent = 100;
 
   Spiral width(int16_t width) {
     _width = width;
@@ -42,9 +44,22 @@ struct Spiral {
     return *this;
   }
 
+  Spiral radiusRangePercent(uint8_t min, uint8_t max) {
+    _minRadiusPercent = min;
+    _maxRadiusPercent = max;
+    return *this;
+  }
+
   Spiral show() {
+    uint8_t minRadius, maxRadius;
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      minRadius = map(_minRadiusPercent, 0, 100, 0, MAX_RADIUS_DISC[d]);
+      maxRadius = map(_maxRadiusPercent, 0, 100, 0, MAX_RADIUS_DISC[d]);
       for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
+        if (!isBetween(discs[d].radius(p), minRadius, maxRadius)) {
+          continue;
+        }
+
         int16_t angle = (_angle + d * _discOffset + 360) % 360;
 
         // Set the LED color if its in range of the current angle
@@ -74,8 +89,8 @@ struct Spiral {
       if (_speed < 3 && brightness < 5) {
         brightness = 0;
       }
-      //discs[d].leds[p] = palette.getColor(_id).nscale8(brightness);
-      discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
+      discs[d].leds[p] = palette.getColor(_id * 2).nscale8(brightness);
+      // discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
       return true;
     }
     if (_speed >= 3 && isBetween(dist, -10, 0) ||
