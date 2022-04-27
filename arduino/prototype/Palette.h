@@ -4,6 +4,7 @@
 #define CM_RADIUS_GRADIENT 2
 #define CM_ANGLE_GRADIENT 3
 #define CM_PETAL_GRADIENT 4
+#define CM_PATCHY 5
 
 struct Palette {
   CRGBPalette16 currentPalette = *(activePalettes[0]);
@@ -66,6 +67,9 @@ struct Palette {
           paletteIndex = map(discs[d].petalIndex(p), 0, discs[d].numLEDsP3 - 1,
                              MAX_PALETTE_INDEX, MAX_PALETTE_INDEX / 2);
         }
+        break;
+      }
+      case CM_PATCHY: {
         break;
       }
       default:

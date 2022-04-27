@@ -64,13 +64,16 @@ void setup() {
     leds[i] = CRGB::Black;
   }
 
-  bloom = bloom.initDownward();
-  bloom2 =
-      bloom2.offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2).initDownward();
+  bloom = bloom.initStartSame();
+  bloom2 = bloom2.offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2)
+               .initStartSame();
 
-  spiral2 = spiral2.id(2).discOffset(-30).reverse().radiusRangePercent(50, 100);
-  spiral = spiral.radiusRangePercent(50, 100);
+  // spiral = spiral.radiusRangePercent(0, 50);
+  // spiral2 = spiral2.id(2).reverse().discOffset(-30).radiusRangePercent(50,
+  // 100);
   // spiral3 = spiral3.id(3).offset(240);
+
+  spiral = spiral.radiusRangePercent(50, 100);
 }
 
 int bloomType = 0;
@@ -82,28 +85,48 @@ void loop() {
   // showPalette();
   // cycleBloomTypes();
 
-  // bloom = bloom.show();
-  // bloom2 = bloom2.show();
+  // bloom = bloom.speed(2).show();
+  // bloom2 = bloom2.speed(2).show();
 
-  // EVERY_N_MILLISECONDS(1000) {
-  //   bloom = bloom.reverse();
-  //   bloom2 = bloom2.reverse();
-  // }
+  EVERY_N_MILLISECONDS(1000) {
+    // bloom = bloom.reverse();
+    // bloom2 = bloom2.reverse();
+  }
 
   // twinkle = twinkle.show();
+  // rubberBandLinear();
+  rubberBand();
 
-  spiral2 = spiral2.show();
-  spiral = spiral.show();
+  // spiral = spiral.show();
+  // spiral2 = spiral2.show();
   // spiral3 = spiral3.show();
 
   EVERY_N_MILLISECONDS(5000) {
-    spiral = spiral.reverse();
-    spiral2 = spiral2.reverse();
+    // spiral = spiral.reverse();
+    // spiral2 = spiral2.reverse();
     // spiral3 = spiral3.reverse();
   }
 
   FastLED.show();
   ticks++;
+}
+
+void rubberBand() {
+  spiral = spiral//.discOffset(360)
+               .discOffset(oscillate(-spiral.DISC_OFFSET.MAX,
+                                     spiral.DISC_OFFSET.MAX))
+               //.width(oscillate(50, 180))
+               //.speed(oscillate(-3, 3, 100))
+               .angle(oscillate(-500, 500))
+               .show();
+}
+
+void rubberBandLinear() {
+  spiral = spiral
+               .discOffset(oscillateLinear(0, spiral.DISC_OFFSET.MAX))
+               //.width(oscillateLinear(50, 180))
+               //.speed(oscillateLinear(-6, 6, 100))
+               .show();
 }
 
 void cycleBloomTypes() {

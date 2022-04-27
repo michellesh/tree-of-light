@@ -1,5 +1,5 @@
 struct Spiral {
-  Range WIDTH = {10, 90, 70};  // How many degrees along the circumference at
+  Range WIDTH = {10, 90, 140};  // How many degrees along the circumference at
                                // the current angle to light up
   Range SPEED = {1, 10, 2};    // How many degrees to add to the current
                                // angle each time
@@ -15,7 +15,7 @@ struct Spiral {
   uint8_t _maxRadiusPercent = 100;
 
   Spiral width(int16_t width) {
-    _width = width;
+    _width = abs(width);
     return *this;
   }
 
@@ -50,6 +50,11 @@ struct Spiral {
     return *this;
   }
 
+  Spiral angle(int16_t angle) {
+    _angle = angle;
+    return *this;
+  }
+
   Spiral show() {
     uint8_t minRadius, maxRadius;
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
@@ -60,7 +65,10 @@ struct Spiral {
           continue;
         }
 
-        int16_t angle = (_angle + d * _discOffset + 360) % 360;
+        int16_t discAngle = map(d, 0, NUM_DISCS - 1, 0, _angle);
+        int16_t discOffset = map(d, 0, NUM_DISCS - 1, 0, _discOffset);
+        //int16_t angle = (discAngle + d * discOffset + 360) % 360;
+        int16_t angle = (discAngle + discOffset + 360) % 360;
 
         // Set the LED color if its in range of the current angle
         // If angle is near beginning (0 degrees), also check LEDs near
@@ -71,11 +79,12 @@ struct Spiral {
             (angle > 360 - _width && setLED(d, p, angle - 360))) {
           continue;
         }
+        discs[d].leds[p] = CRGB::Black;
       }
     }
 
     // Increment the angle. After 360 degrees, start over at 0 degrees
-    _angle = (_angle + _speed + 360) % 360;
+    //_angle = (_angle + _speed + 360) % 360;
 
     return *this;
   }
@@ -93,11 +102,11 @@ struct Spiral {
       // discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
       return true;
     }
-    if (_speed >= 3 && isBetween(dist, -10, 0) ||
-        isBetween(dist, _width, _width + 10)) {
-      discs[d].leds[p] = CRGB::Black;
-      return true;
-    }
+    //if (_speed >= 3 && isBetween(dist, -20, 0) ||
+    //    isBetween(dist, _width, _width + 20)) {
+    //  discs[d].leds[p] = CRGB::Black;
+    //  return true;
+    //}
     return false;
   }
 };

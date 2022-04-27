@@ -38,7 +38,7 @@ CRGBPalette16 fairyPalette = _fairyPalette;
 CRGBPalette16* activePalettes[] = {
   &tealGreenGold,
   &redRoseLavendar,
-  &firePalette,
+  //&firePalette,
   &icePalette,
   &fairyPalette
 };
