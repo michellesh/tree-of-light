@@ -111,14 +111,31 @@ void loop() {
   ticks++;
 }
 
+int toMin = 8;
+int toMax = 0;
+void swap() {
+  int temp = toMin;
+  toMin = toMax;
+  toMax = temp;
+}
+
 void rubberBand() {
-  spiral = spiral//.discOffset(360)
-               .discOffset(oscillate(-spiral.DISC_OFFSET.MAX,
-                                     spiral.DISC_OFFSET.MAX))
-               //.width(oscillate(50, 180))
-               //.speed(oscillate(-3, 3, 100))
-               .angle(oscillate(-500, 500))
-               .show();
+  int offset = sawtooth(0, 45, 100);
+  EVERY_N_SECONDS(1) { swap(); }
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    int16_t angle =
+        mapf(d, 0, NUM_DISCS - 1, toMin, toMax);  // use sawtooth here?
+    spiral = spiral.addDiscAngle(d, angle);
+
+    // spiral = spiral.discAngle(NUM_DISCS - 1 - d, d * offset);
+  }
+  spiral = spiral.show();
+
+  // spiral = spiral.discOffset(oscillate(-360, 360))
+  //                .width(oscillate(50, 180))
+  //                .speed(oscillate(-3, 3, 100))
+  //                .angle(oscillate(-500, 500)) //sawtooth(0, 360, 100)
+  //                .show();
 }
 
 void rubberBandLinear() {

@@ -1,8 +1,8 @@
 struct Spiral {
   Range WIDTH = {10, 90, 140};  // How many degrees along the circumference at
-                               // the current angle to light up
-  Range SPEED = {1, 10, 2};    // How many degrees to add to the current
-                               // angle each time
+                                // the current angle to light up
+  Range SPEED = {1, 10, 2};     // How many degrees to add to the current
+                                // angle each time
   Range DISC_OFFSET = {20, 90, 30};  // How many degrees to increase angle per
                                      // disc higher = tighter spiral
 
@@ -13,6 +13,7 @@ struct Spiral {
   int16_t _discOffset = DISC_OFFSET.DFLT;
   uint8_t _minRadiusPercent = 0;
   uint8_t _maxRadiusPercent = 100;
+  int16_t _discAngles[NUM_DISCS] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   Spiral width(int16_t width) {
     _width = abs(width);
@@ -26,6 +27,16 @@ struct Spiral {
 
   Spiral discOffset(int16_t discOffset) {
     _discOffset = discOffset;
+    return *this;
+  }
+
+  Spiral discAngle(uint8_t i, int16_t angle) {
+    _discAngles[i] = angle + 360 % 360;
+    return *this;
+  }
+
+  Spiral addDiscAngle(uint8_t i, int16_t angle) {
+    _discAngles[i] = (_discAngles[i] + angle + 360) % 360;
     return *this;
   }
 
@@ -65,15 +76,11 @@ struct Spiral {
           continue;
         }
 
-        int16_t discAngle = map(d, 0, NUM_DISCS - 1, 0, _angle);
-        int16_t discOffset = map(d, 0, NUM_DISCS - 1, 0, _discOffset);
-        //int16_t angle = (discAngle + d * discOffset + 360) % 360;
-        int16_t angle = (discAngle + discOffset + 360) % 360;
-
         // Set the LED color if its in range of the current angle
         // If angle is near beginning (0 degrees), also check LEDs near
         // end. If angle is near end (360 degrees), also check LEDs near
         // beginning
+        int16_t angle = _discAngles[d];
         if (setLED(d, p, angle) ||
             (angle < _width && setLED(d, p, 360 + angle)) ||
             (angle > 360 - _width && setLED(d, p, angle - 360))) {
@@ -102,11 +109,11 @@ struct Spiral {
       // discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
       return true;
     }
-    //if (_speed >= 3 && isBetween(dist, -20, 0) ||
-    //    isBetween(dist, _width, _width + 20)) {
-    //  discs[d].leds[p] = CRGB::Black;
-    //  return true;
-    //}
+    // if (_speed >= 3 && isBetween(dist, -20, 0) ||
+    //     isBetween(dist, _width, _width + 20)) {
+    //   discs[d].leds[p] = CRGB::Black;
+    //   return true;
+    // }
     return false;
   }
 };
