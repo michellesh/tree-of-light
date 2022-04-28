@@ -72,7 +72,6 @@ void setup() {
   // spiral2 = spiral2.id(2).reverse().discOffset(-30).radiusRangePercent(50,
   // 100);
   // spiral3 = spiral3.id(3).offset(240);
-
 }
 
 int bloomType = 0;
@@ -111,27 +110,20 @@ void loop() {
   ticks++;
 }
 
-int toMin = 8;
-int toMax = 0;
-void swap() {
-  int temp = toMin;
-  toMin = toMax;
-  toMax = temp;
-}
-
 void rubberBandSwap() {
   if (ticks == 0) {
     spiral = spiral.id(1).radiusRangePercent(50, 100);
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      spiral = spiral.discAngle(d, d * 55);
+    }
   }
 
-  int offset = sawtooth(0, 45, 100);
-  EVERY_N_SECONDS(1) { swap(); }
-  for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    int16_t angle =
-        mapf(d, 0, NUM_DISCS - 1, toMin, toMax);  // use sawtooth here?
-    spiral = spiral.addDiscAngle(d, angle);
+  int toMin = square(8, 0, 100);
+  int toMax = square(0, 8, 100);
 
-    // spiral = spiral.discAngle(NUM_DISCS - 1 - d, d * offset);
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    int16_t angle = mapf(d, 0, NUM_DISCS - 1, toMin, toMax);
+    spiral = spiral.addDiscAngle(d, angle);
   }
   spiral = spiral.show();
 

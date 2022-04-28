@@ -1,8 +1,8 @@
 struct Spiral {
   Range WIDTH = {10, 90, 90};  // How many degrees along the circumference at
-                                // the current angle to light up
-  Range SPEED = {1, 10, 2};     // How many degrees to add to the current
-                                // angle each time
+                               // the current angle to light up
+  Range SPEED = {1, 10, 2};    // How many degrees to add to the current
+                               // angle each time
   Range DISC_OFFSET = {20, 90, 30};  // How many degrees to increase angle per
                                      // disc higher = tighter spiral
 
@@ -86,7 +86,7 @@ struct Spiral {
             (angle > 360 - _width && setLED(d, p, angle - 360))) {
           continue;
         }
-        //discs[d].leds[p] = CRGB::Black;
+        // discs[d].leds[p] = CRGB::Black;
       }
     }
 

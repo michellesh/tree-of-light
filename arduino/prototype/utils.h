@@ -23,6 +23,10 @@ float sawtooth(float minValue, float maxValue, uint8_t waveLength = 50) {
   return mapf(t - floor(t), 0, 1, minValue, maxValue);
 }
 
+float square(float minValue, float maxValue, uint8_t waveLength = 50) {
+  return ticks % (waveLength * 2) < waveLength ? minValue : maxValue;
+}
+
 // This function is like 'triwave8', which produces a
 // symmetrical up-and-down triangle sawtooth waveform, except that this
 // function produces a triangle wave with a faster attack and a slower decay:
