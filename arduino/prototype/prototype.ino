@@ -73,7 +73,6 @@ void setup() {
   // 100);
   // spiral3 = spiral3.id(3).offset(240);
 
-  spiral = spiral.radiusRangePercent(50, 100);
 }
 
 int bloomType = 0;
@@ -95,7 +94,8 @@ void loop() {
 
   // twinkle = twinkle.show();
   // rubberBandLinear();
-  rubberBand();
+  rubberBandSwap();
+  // basicSpiralRotation();
 
   // spiral = spiral.show();
   // spiral2 = spiral2.show();
@@ -119,7 +119,11 @@ void swap() {
   toMax = temp;
 }
 
-void rubberBand() {
+void rubberBandSwap() {
+  if (ticks == 0) {
+    spiral = spiral.id(1).radiusRangePercent(50, 100);
+  }
+
   int offset = sawtooth(0, 45, 100);
   EVERY_N_SECONDS(1) { swap(); }
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
@@ -130,6 +134,33 @@ void rubberBand() {
     // spiral = spiral.discAngle(NUM_DISCS - 1 - d, d * offset);
   }
   spiral = spiral.show();
+
+  // spiral = spiral.discOffset(oscillate(-360, 360))
+  //                .width(oscillate(50, 180))
+  //                .speed(oscillate(-3, 3, 100))
+  //                .angle(oscillate(-500, 500)) //sawtooth(0, 360, 100)
+  //                .show();
+}
+
+void basicSpiralRotation() {
+  if (ticks == 0) {
+    spiral = spiral.id(1).radiusRangePercent(50, 100);
+    spiral2 = spiral2.id(2).radiusRangePercent(50, 100);
+
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      spiral = spiral.discAngle(d, (NUM_DISCS - 1 - d) * 30);
+      spiral2 = spiral2.discAngle(d, d * 30);
+    }
+  }
+
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    spiral = spiral.addDiscAngle(d, 3);
+    spiral2 = spiral2.addDiscAngle(d, -3);
+
+    // spiral = spiral.discAngle(NUM_DISCS - 1 - d, d * offset);
+  }
+  spiral = spiral.show();
+  spiral2 = spiral2.show();
 
   // spiral = spiral.discOffset(oscillate(-360, 360))
   //                .width(oscillate(50, 180))

@@ -1,5 +1,5 @@
 struct Spiral {
-  Range WIDTH = {10, 90, 140};  // How many degrees along the circumference at
+  Range WIDTH = {10, 90, 90};  // How many degrees along the circumference at
                                 // the current angle to light up
   Range SPEED = {1, 10, 2};     // How many degrees to add to the current
                                 // angle each time
@@ -86,7 +86,7 @@ struct Spiral {
             (angle > 360 - _width && setLED(d, p, angle - 360))) {
           continue;
         }
-        discs[d].leds[p] = CRGB::Black;
+        //discs[d].leds[p] = CRGB::Black;
       }
     }
 
@@ -109,11 +109,11 @@ struct Spiral {
       // discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
       return true;
     }
-    // if (_speed >= 3 && isBetween(dist, -20, 0) ||
-    //     isBetween(dist, _width, _width + 20)) {
-    //   discs[d].leds[p] = CRGB::Black;
-    //   return true;
-    // }
+    if (_speed >= 3 && isBetween(dist, -20, 0) ||
+        isBetween(dist, _width, _width + 20)) {
+      discs[d].leds[p] = CRGB::Black;
+      return true;
+    }
     return false;
   }
 };
