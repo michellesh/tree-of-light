@@ -57,6 +57,7 @@ struct Spiral {
       maxRadius = map(_maxRadiusPercent, 0, 100, 0, MAX_RADIUS_DISC[d]);
       for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
         if (!isBetween(discs[d].radius(p), minRadius, maxRadius)) {
+          discs[d].leds[p] = CRGB::Black;
           continue;
         }
 

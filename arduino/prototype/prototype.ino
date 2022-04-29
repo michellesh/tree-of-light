@@ -88,10 +88,11 @@ void loop() {
 
   // twinkle = twinkle.show();
 
-  rubberBandAnchored();
+  // rubberBandAnchored();
   // basicSpiralRotation();
   // rubberBandNoAnchor();
   // rubberBandWorm();
+  continuousSpiral();
 
   EVERY_N_MILLISECONDS(5000) {
     // spiral = spiral.reverse();
@@ -174,6 +175,25 @@ void basicSpiralRotation() {
 
   spiral = spiral.show();
   spiral2 = spiral2.show();
+}
+
+void continuousSpiral() {
+  if (ticks == 0) {
+    spiral = spiral.radiusRangePercent(50, 100).speed(3);
+  }
+  int16_t offset = sawtooth(0, 360, 200);
+  int16_t width = sinwave(30, 180, 100, 150);
+  int16_t minRadiusPercent = sinwave(0, 90, 100, 150);
+  int16_t maxRadiusPercent = sinwave(90, 100, 100, 150);
+  int16_t speed = sinwave(0, 5, 100, 150);
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    spiral = spiral.discOffset(d, (1 + d) * offset)
+                 .width(width)
+                 .speed(speed)
+                 .radiusRangePercent(minRadiusPercent, maxRadiusPercent);
+  }
+  spiral = spiral.show();
+  plotVars(3, offset, width, speed * 100);
 }
 
 void cycleBloomTypes() {

@@ -14,8 +14,12 @@ int triangle(int min, int max, uint16_t waveLength = 400) {
              : map(x, waveLength * 3 / 4, waveLength, min, middle);
 }
 
-float sinwave(float minValue, float maxValue, uint8_t waveLength = 50) {
-  return mapf(sin((float)ticks * PI / waveLength), -1, 1, minValue, maxValue);
+float sinwave(float minValue, float maxValue, uint8_t waveLength = 50, unsigned long offset = 0) {
+  return mapf(sin((float)(ticks + offset) * PI / waveLength), -1, 1, minValue, maxValue);
+}
+
+float coswave(float minValue, float maxValue, uint8_t waveLength = 50) {
+  return mapf(cos((float)ticks * PI / waveLength), -1, 1, minValue, maxValue);
 }
 
 float cosSawtooth(float minValue, float maxValue, uint8_t waveLength = 50) {
