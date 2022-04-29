@@ -15,7 +15,7 @@ int oscillateLinear(int min, int max, uint16_t waveLength = 400) {
 }
 
 float oscillate(float minValue, float maxValue, uint8_t waveLength = 50) {
-  return mapf(sin((float)ticks / waveLength), -1, 1, minValue, maxValue);
+  return mapf(sin((float)ticks * PI / waveLength), -1, 1, minValue, maxValue);
 }
 
 float sawtooth(float minValue, float maxValue, uint8_t waveLength = 50) {

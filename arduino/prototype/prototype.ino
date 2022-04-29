@@ -93,7 +93,8 @@ void loop() {
 
   // twinkle = twinkle.show();
   // rubberBandLinear();
-  rubberBandSwap();
+  // rubberBandSwap();
+  rubberBandBounce();
   // basicSpiralRotation();
 
   // spiral = spiral.show();
@@ -126,12 +127,29 @@ void rubberBandSwap() {
     spiral = spiral.addDiscAngle(d, angle);
   }
   spiral = spiral.show();
+}
 
-  // spiral = spiral.discOffset(oscillate(-360, 360))
-  //                .width(oscillate(50, 180))
-  //                .speed(oscillate(-3, 3, 100))
-  //                .angle(oscillate(-500, 500)) //sawtooth(0, 360, 100)
-  //                .show();
+void plotVars(int numValues, ...) {
+  va_list values;
+  va_start(values, numValues);
+  for (int i = 0; i < numValues; i++) {
+    Serial.print(va_arg(values, int));
+    Serial.print(" ");
+  }
+  va_end(values);
+  Serial.println();
+}
+
+void rubberBandBounce() {
+  int toMin = square(8, 0, 100);
+  int toMax = square(0, 8, 100);
+  int16_t angle = oscillate(-360, 360, 100);
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    int16_t discAngle = mapf(d, toMin, toMax, 0, angle);
+    spiral = spiral.discAngle(d, discAngle);
+  }
+  spiral = spiral.show();
+  plotVars(3, toMin * 100, toMax * 100, angle);
 }
 
 void basicSpiralRotation() {
