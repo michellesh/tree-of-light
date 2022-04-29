@@ -10,10 +10,9 @@ struct Spiral {
   int16_t _angle = 0;  // the current angle
   int16_t _width = WIDTH.DFLT;
   int16_t _speed = SPEED.DFLT;
-  int16_t _discOffset = DISC_OFFSET.DFLT;
+  int16_t _discOffset[NUM_DISCS] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   uint8_t _minRadiusPercent = 0;
   uint8_t _maxRadiusPercent = 100;
-  int16_t _discAngles[NUM_DISCS] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   Spiral width(int16_t width) {
     _width = abs(width);
@@ -25,28 +24,13 @@ struct Spiral {
     return *this;
   }
 
-  Spiral discOffset(int16_t discOffset) {
-    _discOffset = discOffset;
-    return *this;
-  }
-
-  Spiral discAngle(uint8_t i, int16_t angle) {
-    _discAngles[i] = angle + 360 % 360;
-    return *this;
-  }
-
-  Spiral addDiscAngle(uint8_t i, int16_t angle) {
-    _discAngles[i] = (_discAngles[i] + angle + 360) % 360;
+  Spiral discOffset(uint8_t i, int16_t angle) {
+    _discOffset[i] = angle;
     return *this;
   }
 
   Spiral reverse() {
     _speed = _speed * -1;
-    return *this;
-  }
-
-  Spiral offset(int16_t offset) {
-    _angle = (_angle + offset + 360) % 360;
     return *this;
   }
 
@@ -80,7 +64,7 @@ struct Spiral {
         // If angle is near beginning (0 degrees), also check LEDs near
         // end. If angle is near end (360 degrees), also check LEDs near
         // beginning
-        int16_t angle = _discAngles[d];
+        int16_t angle = (_angle + _discOffset[d] + 360) % 360;
         if (setLED(d, p, angle) ||
             (angle < _width && setLED(d, p, 360 + angle)) ||
             (angle > 360 - _width && setLED(d, p, angle - 360))) {
@@ -91,7 +75,7 @@ struct Spiral {
     }
 
     // Increment the angle. After 360 degrees, start over at 0 degrees
-    //_angle = (_angle + _speed + 360) % 360;
+    _angle = (_angle + _speed + 360) % 360;
 
     return *this;
   }
@@ -102,18 +86,18 @@ struct Spiral {
     int16_t dist = angle - discs[d].angle(p);
     if (dist > 0 && dist < _width) {
       uint8_t brightness = mapDistToBrightness(map(dist, 0, _width, 0, 255));
-      //if (_speed < 3 && brightness < 5) {
-      //  brightness = 0;
-      //}
+      // if (_speed < 3 && brightness < 5) {
+      //   brightness = 0;
+      // }
       discs[d].leds[p] = palette.getColor(_id * 2).nscale8(brightness);
       // discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
       return true;
     }
-    //if (_speed >= 3 && isBetween(dist, -20, 0) ||
-    //    isBetween(dist, _width, _width + 20)) {
-    //  discs[d].leds[p] = CRGB::Black;
-    //  return true;
-    //}
+    // if (_speed >= 3 && isBetween(dist, -20, 0) ||
+    //     isBetween(dist, _width, _width + 20)) {
+    //   discs[d].leds[p] = CRGB::Black;
+    //   return true;
+    // }
     return false;
   }
 };

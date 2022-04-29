@@ -67,11 +67,6 @@ void setup() {
   bloom = bloom.initStartSame();
   bloom2 = bloom2.offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2)
                .initStartSame();
-
-  // spiral = spiral.radiusRangePercent(0, 50);
-  // spiral2 = spiral2.id(2).reverse().discOffset(-30).radiusRangePercent(50,
-  // 100);
-  // spiral3 = spiral3.id(3).offset(240);
 }
 
 int bloomType = 0;
@@ -92,16 +87,11 @@ void loop() {
   }
 
   // twinkle = twinkle.show();
-  // rubberBandLinear();
-  // rubberBandSwap();
-  // rubberBandAnchored();
-  // basicSpiralRotation();
-  //rubberBandNoAnchor();
-  rubberBandWorm();
 
-  // spiral = spiral.show();
-  // spiral2 = spiral2.show();
-  // spiral3 = spiral3.show();
+  rubberBandAnchored();
+  // basicSpiralRotation();
+  // rubberBandNoAnchor();
+  // rubberBandWorm();
 
   EVERY_N_MILLISECONDS(5000) {
     // spiral = spiral.reverse();
@@ -124,10 +114,9 @@ void plotVars(int numValues, ...) {
   Serial.println();
 }
 
-int16_t angle = 0;
 void rubberBandWorm() {
   if (ticks == 0) {
-    spiral = spiral.id(1).radiusRangePercent(50, 100);
+    spiral = spiral.radiusRangePercent(50, 100);
   }
 
   int16_t offset = sinwave(-90, 90, 100);
@@ -135,18 +124,14 @@ void rubberBandWorm() {
   int16_t speed = sinwave(3, 6);
 
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    spiral = spiral.discAngle(d, angle)
-                 .addDiscAngle(d, d * offset)
-                 .width(abs(width));
+    spiral = spiral.speed(speed).discOffset(d, d * offset).width(abs(width));
   }
-  angle = (angle + speed + 360) % 360;
   spiral = spiral.show();
-  plotVars(3, angle, offset, speed * 10);
 }
 
 void rubberBandNoAnchor() {
   if (ticks == 0) {
-    spiral = spiral.id(1).radiusRangePercent(50, 100);
+    spiral = spiral.radiusRangePercent(50, 100).speed(0);
   }
 
   int16_t angle = sinwave(-200, 200, 200);
@@ -154,61 +139,41 @@ void rubberBandNoAnchor() {
   int16_t width = sinwave(-180, 180, 200);
 
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    spiral = spiral.discAngle(d, angle)
-                 .addDiscAngle(d, d * offset)
-                 .width(abs(width));
+    spiral = spiral.angle(angle).discOffset(d, d * offset).width(abs(width));
   }
   spiral = spiral.show();
-  plotVars(2, angle, offset);
 }
 
 void rubberBandAnchored() {
+  if (ticks == 0) {
+    spiral = spiral.radiusRangePercent(50, 100).angle(0).speed(0);
+  }
+
   int toMin = square(8, 0, 100);
   int toMax = square(0, 8, 100);
-  int16_t angle = sinwave(-360, 360, 100);
-  // int16_t angle = sawtooth(-360, 360, 100); // swapping effect
-  // int16_t angle = cosSawtooth(-360, 360, 100);
+  // int16_t offset = sinwave(-360, 360, 100);
+  // int16_t offset = sawtooth(-360, 360, 100); // swapping effect
+  int16_t offset = cosSawtooth(-360, 360, 100);
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    int16_t discAngle = mapf(d, toMin, toMax, 0, angle);
-    spiral = spiral.discAngle(d, discAngle);
+    int16_t discOffset = mapf(d, toMin, toMax, 0, offset);
+    spiral = spiral.discOffset(d, discOffset);
   }
   spiral = spiral.show();
-  plotVars(3, toMin * 100, toMax * 100, angle);
 }
 
 void basicSpiralRotation() {
   if (ticks == 0) {
-    spiral = spiral.id(1).radiusRangePercent(50, 100);
-    spiral2 = spiral2.id(2).radiusRangePercent(50, 100);
+    spiral = spiral.id(1).radiusRangePercent(50, 100).speed(3);
+    spiral2 = spiral2.id(2).radiusRangePercent(50, 100).speed(-3);
 
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      spiral = spiral.discAngle(d, (NUM_DISCS - 1 - d) * 30);
-      spiral2 = spiral2.discAngle(d, d * 30);
+      spiral = spiral.discOffset(d, (NUM_DISCS - 1 - d) * 30);
+      spiral2 = spiral2.discOffset(d, d * 30);
     }
   }
 
-  for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    spiral = spiral.addDiscAngle(d, 3);
-    spiral2 = spiral2.addDiscAngle(d, -3);
-
-    // spiral = spiral.discAngle(NUM_DISCS - 1 - d, d * offset);
-  }
   spiral = spiral.show();
   spiral2 = spiral2.show();
-
-  // spiral = spiral.discOffset(sinwave(-360, 360))
-  //                .width(sinwave(50, 180))
-  //                .speed(sinwave(-3, 3, 100))
-  //                .angle(sinwave(-500, 500)) //sawtooth(0, 360, 100)
-  //                .show();
-}
-
-void rubberBandLinear() {
-  spiral = spiral
-               .discOffset(triangle(0, spiral.DISC_OFFSET.MAX))
-               //.width(triangle(50, 180))
-               //.speed(triangle(-6, 6, 100))
-               .show();
 }
 
 void cycleBloomTypes() {
