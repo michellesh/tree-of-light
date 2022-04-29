@@ -96,7 +96,8 @@ void loop() {
   // rubberBandSwap();
   // rubberBandAnchored();
   // basicSpiralRotation();
-  rubberBandNoAnchor();
+  //rubberBandNoAnchor();
+  rubberBandWorm();
 
   // spiral = spiral.show();
   // spiral2 = spiral2.show();
@@ -121,6 +122,26 @@ void plotVars(int numValues, ...) {
   }
   va_end(values);
   Serial.println();
+}
+
+int16_t angle = 0;
+void rubberBandWorm() {
+  if (ticks == 0) {
+    spiral = spiral.id(1).radiusRangePercent(50, 100);
+  }
+
+  int16_t offset = sinwave(-90, 90, 100);
+  int16_t width = sinwave(-180, 180, 100);
+  int16_t speed = sinwave(3, 6);
+
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    spiral = spiral.discAngle(d, angle)
+                 .addDiscAngle(d, d * offset)
+                 .width(abs(width));
+  }
+  angle = (angle + speed + 360) % 360;
+  spiral = spiral.show();
+  plotVars(3, angle, offset, speed * 10);
 }
 
 void rubberBandNoAnchor() {
