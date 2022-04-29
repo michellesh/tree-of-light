@@ -94,8 +94,9 @@ void loop() {
   // twinkle = twinkle.show();
   // rubberBandLinear();
   // rubberBandSwap();
-  rubberBandBounce();
+  // rubberBandAnchored();
   // basicSpiralRotation();
+  rubberBandNoAnchor();
 
   // spiral = spiral.show();
   // spiral2 = spiral2.show();
@@ -111,24 +112,6 @@ void loop() {
   ticks++;
 }
 
-void rubberBandSwap() {
-  if (ticks == 0) {
-    spiral = spiral.id(1).radiusRangePercent(50, 100);
-    for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      spiral = spiral.discAngle(d, d * 55);
-    }
-  }
-
-  int toMin = square(8, 0, 100);
-  int toMax = square(0, 8, 100);
-
-  for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    int16_t angle = mapf(d, 0, NUM_DISCS - 1, toMin, toMax);
-    spiral = spiral.addDiscAngle(d, angle);
-  }
-  spiral = spiral.show();
-}
-
 void plotVars(int numValues, ...) {
   va_list values;
   va_start(values, numValues);
@@ -140,12 +123,30 @@ void plotVars(int numValues, ...) {
   Serial.println();
 }
 
-void rubberBandBounce() {
+void rubberBandNoAnchor() {
+  if (ticks == 0) {
+    spiral = spiral.id(1).radiusRangePercent(50, 100);
+  }
+
+  int16_t angle = sinwave(-200, 200, 200);
+  int16_t offset = sinwave(-90, 90, 200);
+  int16_t width = sinwave(-180, 180, 200);
+
+  for (uint8_t d = 0; d < NUM_DISCS; d++) {
+    spiral = spiral.discAngle(d, angle)
+                 .addDiscAngle(d, d * offset)
+                 .width(abs(width));
+  }
+  spiral = spiral.show();
+  plotVars(2, angle, offset);
+}
+
+void rubberBandAnchored() {
   int toMin = square(8, 0, 100);
   int toMax = square(0, 8, 100);
-  // int16_t angle = sinwave(-360, 360, 100);
-  // int16_t angle = sawtooth(-360, 360, 100);
-  int16_t angle = cosSawtooth(-360, 360, 100);
+  int16_t angle = sinwave(-360, 360, 100);
+  // int16_t angle = sawtooth(-360, 360, 100); // swapping effect
+  // int16_t angle = cosSawtooth(-360, 360, 100);
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
     int16_t discAngle = mapf(d, toMin, toMax, 0, angle);
     spiral = spiral.discAngle(d, discAngle);

@@ -86,7 +86,7 @@ struct Spiral {
             (angle > 360 - _width && setLED(d, p, angle - 360))) {
           continue;
         }
-        // discs[d].leds[p] = CRGB::Black;
+        discs[d].leds[p] = CRGB::Black;
       }
     }
 
@@ -102,18 +102,18 @@ struct Spiral {
     int16_t dist = angle - discs[d].angle(p);
     if (dist > 0 && dist < _width) {
       uint8_t brightness = mapDistToBrightness(map(dist, 0, _width, 0, 255));
-      if (_speed < 3 && brightness < 5) {
-        brightness = 0;
-      }
+      //if (_speed < 3 && brightness < 5) {
+      //  brightness = 0;
+      //}
       discs[d].leds[p] = palette.getColor(_id * 2).nscale8(brightness);
       // discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
       return true;
     }
-    if (_speed >= 3 && isBetween(dist, -20, 0) ||
-        isBetween(dist, _width, _width + 20)) {
-      discs[d].leds[p] = CRGB::Black;
-      return true;
-    }
+    //if (_speed >= 3 && isBetween(dist, -20, 0) ||
+    //    isBetween(dist, _width, _width + 20)) {
+    //  discs[d].leds[p] = CRGB::Black;
+    //  return true;
+    //}
     return false;
   }
 };
