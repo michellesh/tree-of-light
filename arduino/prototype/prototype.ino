@@ -143,7 +143,9 @@ void plotVars(int numValues, ...) {
 void rubberBandBounce() {
   int toMin = square(8, 0, 100);
   int toMax = square(0, 8, 100);
-  int16_t angle = oscillate(-360, 360, 100);
+  // int16_t angle = sinwave(-360, 360, 100);
+  // int16_t angle = sawtooth(-360, 360, 100);
+  int16_t angle = cosSawtooth(-360, 360, 100);
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
     int16_t discAngle = mapf(d, toMin, toMax, 0, angle);
     spiral = spiral.discAngle(d, discAngle);
@@ -172,18 +174,18 @@ void basicSpiralRotation() {
   spiral = spiral.show();
   spiral2 = spiral2.show();
 
-  // spiral = spiral.discOffset(oscillate(-360, 360))
-  //                .width(oscillate(50, 180))
-  //                .speed(oscillate(-3, 3, 100))
-  //                .angle(oscillate(-500, 500)) //sawtooth(0, 360, 100)
+  // spiral = spiral.discOffset(sinwave(-360, 360))
+  //                .width(sinwave(50, 180))
+  //                .speed(sinwave(-3, 3, 100))
+  //                .angle(sinwave(-500, 500)) //sawtooth(0, 360, 100)
   //                .show();
 }
 
 void rubberBandLinear() {
   spiral = spiral
-               .discOffset(oscillateLinear(0, spiral.DISC_OFFSET.MAX))
-               //.width(oscillateLinear(50, 180))
-               //.speed(oscillateLinear(-6, 6, 100))
+               .discOffset(triangle(0, spiral.DISC_OFFSET.MAX))
+               //.width(triangle(50, 180))
+               //.speed(triangle(-6, 6, 100))
                .show();
 }
 

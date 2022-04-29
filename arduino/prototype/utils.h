@@ -3,7 +3,7 @@ float mapf(float value, float inMin, float inMax, float outMin, float outMax) {
   return outMin + (outMax - outMin) * percentage;
 }
 
-int oscillateLinear(int min, int max, uint16_t waveLength = 400) {
+int triangle(int min, int max, uint16_t waveLength = 400) {
   int middle = (min + max) / 2;
   uint16_t x = ticks % waveLength;
   return x < waveLength / 4 ? map(x, 0, waveLength / 4, middle, max)
@@ -14,8 +14,14 @@ int oscillateLinear(int min, int max, uint16_t waveLength = 400) {
              : map(x, waveLength * 3 / 4, waveLength, min, middle);
 }
 
-float oscillate(float minValue, float maxValue, uint8_t waveLength = 50) {
+float sinwave(float minValue, float maxValue, uint8_t waveLength = 50) {
   return mapf(sin((float)ticks * PI / waveLength), -1, 1, minValue, maxValue);
+}
+
+float cosSawtooth(float minValue, float maxValue, uint8_t waveLength = 50) {
+  int8_t s = ticks % (waveLength * 2) < waveLength ? -1 : 1;
+  return mapf(s * (cos((float)ticks * PI / waveLength)), -1, 1, minValue,
+              maxValue);
 }
 
 float sawtooth(float minValue, float maxValue, uint8_t waveLength = 50) {
