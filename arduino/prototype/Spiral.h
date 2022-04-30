@@ -13,6 +13,8 @@ struct Spiral {
   int16_t _discOffset[NUM_DISCS] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   uint8_t _minRadiusPercent = 0;
   uint8_t _maxRadiusPercent = 100;
+  uint8_t _minHeightPercent = 0;
+  uint8_t _maxHeightPercent = 100;
 
   Spiral width(int16_t width) {
     _width = abs(width);
@@ -45,6 +47,12 @@ struct Spiral {
     return *this;
   }
 
+  Spiral heightRangePercent(uint8_t min, uint8_t max) {
+    _minHeightPercent = min;
+    _maxHeightPercent = max;
+    return *this;
+  }
+
   Spiral angle(int16_t angle) {
     _angle = angle;
     return *this;
@@ -56,7 +64,9 @@ struct Spiral {
       minRadius = map(_minRadiusPercent, 0, 100, 0, MAX_RADIUS_DISC[d]);
       maxRadius = map(_maxRadiusPercent, 0, 100, 0, MAX_RADIUS_DISC[d]);
       for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
-        if (!isBetween(discs[d].radius(p), minRadius, maxRadius)) {
+        if (!isBetween(discs[d].radius(p), minRadius, maxRadius) ||
+            !isBetween(map(d, NUM_DISCS - 1, 0, 0, 100), _minHeightPercent,
+                       _maxHeightPercent)) {
           discs[d].leds[p] = CRGB::Black;
           continue;
         }

@@ -92,7 +92,8 @@ void loop() {
   // basicSpiralRotation();
   // rubberBandNoAnchor();
   // rubberBandWorm();
-  continuousSpiral();
+  // continuousSpiral();
+  growingSpiral();
 
   EVERY_N_MILLISECONDS(5000) {
     // spiral = spiral.reverse();
@@ -113,6 +114,18 @@ void plotVars(int numValues, ...) {
   }
   va_end(values);
   Serial.println();
+}
+
+void growingSpiral() {
+  if (ticks == 0) {
+    spiral = spiral.radiusRangePercent(50, 100).speed(0).angle(0);
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      spiral = spiral.discOffset(d, d * 30);
+    }
+  }
+
+  uint8_t maxHeightPercent = sinwave(0, 100);
+  spiral = spiral.heightRangePercent(0, maxHeightPercent).show();
 }
 
 void rubberBandWorm() {
