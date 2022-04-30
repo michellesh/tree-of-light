@@ -181,11 +181,13 @@ void continuousSpiral() {
   if (ticks == 0) {
     spiral = spiral.radiusRangePercent(50, 100).speed(3);
   }
-  int16_t offset = sawtooth(0, 360, 200);
-  int16_t width = sinwave(30, 180, 100, 150);
-  int16_t minRadiusPercent = sinwave(0, 90, 100, 150);
-  int16_t maxRadiusPercent = sinwave(90, 100, 100, 150);
-  int16_t speed = sinwave(0, 5, 100, 150);
+  unsigned long waveLength = 400;
+  unsigned long waveLengthOffset = waveLength * 3 / 4;
+  int16_t offset = sawtooth(0, 360, waveLength);
+  int16_t width = sinwave(30, 180, waveLength / 2, waveLengthOffset);
+  int16_t minRadiusPercent = sinwave(0, 90, waveLength / 2, waveLengthOffset);
+  int16_t maxRadiusPercent = sinwave(90, 100, waveLength / 2, waveLengthOffset);
+  int16_t speed = sinwave(0, 5, waveLength / 2, waveLengthOffset);
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
     spiral = spiral.discOffset(d, (1 + d) * offset)
                  .width(width)
@@ -193,7 +195,7 @@ void continuousSpiral() {
                  .radiusRangePercent(minRadiusPercent, maxRadiusPercent);
   }
   spiral = spiral.show();
-  plotVars(3, offset, width, speed * 100);
+  plotVars(3, 4 * offset, 4 * width, 4 * speed * 100);
 }
 
 void cycleBloomTypes() {

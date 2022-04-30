@@ -3,7 +3,7 @@ float mapf(float value, float inMin, float inMax, float outMin, float outMax) {
   return outMin + (outMax - outMin) * percentage;
 }
 
-int triangle(int min, int max, uint16_t waveLength = 400) {
+int triangle(int min, int max, unsigned long waveLength = 400) {
   int middle = (min + max) / 2;
   uint16_t x = ticks % waveLength;
   return x < waveLength / 4 ? map(x, 0, waveLength / 4, middle, max)
@@ -14,26 +14,29 @@ int triangle(int min, int max, uint16_t waveLength = 400) {
              : map(x, waveLength * 3 / 4, waveLength, min, middle);
 }
 
-float sinwave(float minValue, float maxValue, uint8_t waveLength = 50, unsigned long offset = 0) {
-  return mapf(sin((float)(ticks + offset) * PI / waveLength), -1, 1, minValue, maxValue);
+float sinwave(float minValue, float maxValue, unsigned long waveLength = 50,
+              unsigned long waveLengthOffset = 0) {
+  return mapf(sin((float)(ticks + waveLengthOffset) * PI / waveLength), -1, 1,
+              minValue, maxValue);
 }
 
-float coswave(float minValue, float maxValue, uint8_t waveLength = 50) {
+float coswave(float minValue, float maxValue, unsigned long waveLength = 50) {
   return mapf(cos((float)ticks * PI / waveLength), -1, 1, minValue, maxValue);
 }
 
-float cosSawtooth(float minValue, float maxValue, uint8_t waveLength = 50) {
+float cosSawtooth(float minValue, float maxValue,
+                  unsigned long waveLength = 50) {
   int8_t s = ticks % (waveLength * 2) < waveLength ? -1 : 1;
   return mapf(s * (cos((float)ticks * PI / waveLength)), -1, 1, minValue,
               maxValue);
 }
 
-float sawtooth(float minValue, float maxValue, uint8_t waveLength = 50) {
+float sawtooth(float minValue, float maxValue, unsigned long waveLength = 50) {
   float t = (float)ticks / waveLength;
   return mapf(t - floor(t), 0, 1, minValue, maxValue);
 }
 
-float square(float minValue, float maxValue, uint8_t waveLength = 50) {
+float square(float minValue, float maxValue, unsigned long waveLength = 50) {
   return ticks % (waveLength * 2) < waveLength ? minValue : maxValue;
 }
 
