@@ -31,8 +31,9 @@ float cosSawtooth(float minValue, float maxValue,
               maxValue);
 }
 
-float sawtooth(float minValue, float maxValue, unsigned long waveLength = 50) {
-  float t = (float)ticks / waveLength;
+float sawtooth(float minValue, float maxValue, unsigned long waveLength = 50,
+               unsigned long waveLengthOffset = 0) {
+  float t = (float)(ticks + waveLengthOffset) / waveLength;
   return mapf(t - floor(t), 0, 1, minValue, maxValue);
 }
 

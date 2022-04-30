@@ -1,3 +1,5 @@
+uint8_t PERCENT_HEIGHT_DISC[] = {100, 89, 78, 67, 56, 45, 34, 23, 12};
+
 struct Spiral {
   Range WIDTH = {10, 90, 90};  // How many degrees along the circumference at
                                // the current angle to light up
@@ -11,8 +13,8 @@ struct Spiral {
   int16_t _width = WIDTH.DFLT;
   int16_t _speed = SPEED.DFLT;
   int16_t _discOffset[NUM_DISCS] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  uint8_t _minRadiusPercent = 0;
-  uint8_t _maxRadiusPercent = 100;
+  uint8_t _minRadius[NUM_DISCS] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  uint8_t _maxRadius[NUM_DISCS] = {100, 100, 100, 100, 100, 100, 100, 100, 100};
   uint8_t _minHeightPercent = 0;
   uint8_t _maxHeightPercent = 100;
 
@@ -42,8 +44,10 @@ struct Spiral {
   }
 
   Spiral radiusRangePercent(uint8_t min, uint8_t max) {
-    _minRadiusPercent = min;
-    _maxRadiusPercent = max;
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      _minRadius[d] = map(min, 0, 100, 0, MAX_RADIUS_DISC[d]);
+      _maxRadius[d] = map(max, 0, 100, 0, MAX_RADIUS_DISC[d]);
+    }
     return *this;
   }
 
@@ -58,19 +62,32 @@ struct Spiral {
     return *this;
   }
 
-  Spiral show() {
-    uint8_t minRadius, maxRadius;
-    for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      minRadius = map(_minRadiusPercent, 0, 100, 0, MAX_RADIUS_DISC[d]);
-      maxRadius = map(_maxRadiusPercent, 0, 100, 0, MAX_RADIUS_DISC[d]);
-      for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
-        if (!isBetween(discs[d].radius(p), minRadius, maxRadius) ||
-            !isBetween(map(d, NUM_DISCS - 1, 0, 0, 100), _minHeightPercent,
-                       _maxHeightPercent)) {
-          discs[d].leds[p] = CRGB::Black;
-          continue;
-        }
+  uint8_t radiusRangeBrightness(uint8_t d) {
+    uint8_t percentFade = 50;
+    uint8_t height = PERCENT_HEIGHT_DISC[d];
+    if (isBetween(height, _minHeightPercent, _minHeightPercent + percentFade,
+                  true)) {
+      return map(height, _minHeightPercent, _minHeightPercent + percentFade, 0,
+                 255);
+    } else if (isBetween(height, _maxHeightPercent - percentFade,
+                         _maxHeightPercent, true)) {
+      return map(height, _maxHeightPercent - percentFade, _maxHeightPercent,
+                 255, 0);
+    } else if (_minHeightPercent < _maxHeightPercent) {
+      return isBetween(height, _minHeightPercent + percentFade,
+                       _maxHeightPercent - percentFade, true)
+                 ? 255
+                 : 0;
+    } else {
+      return isBetween(height, _maxHeightPercent, _minHeightPercent, true)
+                 ? 0
+                 : 255;
+    }
+  }
 
+  Spiral show() {
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
         // Set the LED color if its in range of the current angle
         // If angle is near beginning (0 degrees), also check LEDs near
         // end. If angle is near end (360 degrees), also check LEDs near
@@ -81,7 +98,7 @@ struct Spiral {
             (angle > 360 - _width && setLED(d, p, angle - 360))) {
           continue;
         }
-        discs[d].leds[p] = CRGB::Black;
+        // discs[d].leds[p] = CRGB::Black;
       }
     }
 
@@ -97,18 +114,21 @@ struct Spiral {
     int16_t dist = angle - discs[d].angle(p);
     if (dist > 0 && dist < _width) {
       uint8_t brightness = mapDistToBrightness(map(dist, 0, _width, 0, 255));
-      // if (_speed < 3 && brightness < 5) {
-      //   brightness = 0;
-      // }
+      uint8_t radiusFade = radiusRangeBrightness(d);
+      brightness = min(brightness, radiusFade);
+      if (!isBetween(discs[d].radius(p), _minRadius[d], _maxRadius[d]) ||
+          (_speed < 3 && brightness < 5)) {
+        brightness = 0;
+      }
       discs[d].leds[p] = palette.getColor(_id * 2).nscale8(brightness);
       // discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
       return true;
     }
-    // if (_speed >= 3 && isBetween(dist, -20, 0) ||
-    //     isBetween(dist, _width, _width + 20)) {
-    //   discs[d].leds[p] = CRGB::Black;
-    //   return true;
-    // }
+    if (_speed >= 3 && isBetween(dist, -20, 0) ||
+        isBetween(dist, _width, _width + 20)) {
+      discs[d].leds[p] = CRGB::Black;
+      return true;
+    }
     return false;
   }
 };

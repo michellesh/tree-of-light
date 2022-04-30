@@ -93,7 +93,7 @@ void loop() {
   // rubberBandNoAnchor();
   // rubberBandWorm();
   // continuousSpiral();
-  growingSpiral();
+  growingSpirals();
 
   EVERY_N_MILLISECONDS(5000) {
     // spiral = spiral.reverse();
@@ -116,16 +116,32 @@ void plotVars(int numValues, ...) {
   Serial.println();
 }
 
-void growingSpiral() {
+void growingSpirals() {
   if (ticks == 0) {
-    spiral = spiral.radiusRangePercent(50, 100).speed(0).angle(0);
+    spiral = spiral.id(1).radiusRangePercent(50, 100).speed(0).angle(0);
+    spiral2 = spiral2.id(2).radiusRangePercent(50, 100).speed(0).angle(120);
+    spiral3 = spiral3.id(3).radiusRangePercent(50, 100).speed(0).angle(240);
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
       spiral = spiral.discOffset(d, d * 30);
+      spiral2 = spiral2.discOffset(d, d * 30);
+      spiral3 = spiral3.discOffset(d, d * 30);
     }
   }
 
-  uint8_t maxHeightPercent = sinwave(0, 100);
-  spiral = spiral.heightRangePercent(0, maxHeightPercent).show();
+  unsigned long w = 100;  // waveLength
+  unsigned long wo = 33;  // waveLengthOffset
+  spiral =
+      spiral
+          .heightRangePercent(sawtooth(-50, 150, w, wo), sawtooth(-50, 150, w))
+          .show();
+  spiral2 = spiral2
+                .heightRangePercent(sawtooth(-50, 150, w, wo * 2),
+                                    sawtooth(-50, 150, w, wo))
+                .show();
+  spiral3 = spiral3
+                .heightRangePercent(sawtooth(-50, 150, w, w),
+                                    sawtooth(-50, 150, w, wo * 2))
+                .show();
 }
 
 void rubberBandWorm() {
