@@ -69,30 +69,17 @@ void setup() {
   for (int16_t i = 0; i < NUM_LEDS_TOTAL; i++) {
     leds[i] = CRGB::Black;
   }
-
-  bloom = bloom.initStartSame();
-  bloom2 = bloom2.offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2)
-               .initStartSame();
 }
-
-int bloomType = 0;
 
 void loop() {
   palette = palette.cycle();
 
   // cyclePalettes();
   // showPalette();
-  // cycleBloomTypes();
 
-  // bloom = bloom.speed(2).show();
-  // bloom2 = bloom2.speed(2).show();
+  // twinkle = twinkle.show();
 
-  EVERY_N_MILLISECONDS(1000) {
-    // bloom = bloom.reverse();
-    // bloom2 = bloom2.reverse();
-  }
-
-  twinkle = twinkle.show();
+  showBloom();
 
   // rubberBandAnchored();
   // basicSpiralRotation();
@@ -109,6 +96,25 @@ void loop() {
 
   FastLED.show();
   ticks++;
+}
+
+void showBloom() {
+  if (ticks == 0) {
+    bloom = bloom.group(0).initStartSame();
+    bloom2 = bloom2.group(1)
+                 .offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2)
+                 .initStartSame();
+  }
+
+  // cycleBloomTypes();
+
+  bloom = bloom.show();
+  bloom2 = bloom2.show();
+
+  EVERY_N_MILLISECONDS(1000) {
+    // bloom = bloom.reverse();
+    // bloom2 = bloom2.reverse();
+  }
 }
 
 void plotVars(int numValues, ...) {
@@ -233,6 +239,7 @@ void continuousSpiral() {
   plotVars(3, 4 * offset, 4 * width, 4 * speed * 100);
 }
 
+int bloomType = 0;
 void cycleBloomTypes() {
   EVERY_N_SECONDS(10) {
     bloomType++;
