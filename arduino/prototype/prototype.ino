@@ -69,6 +69,8 @@ void setup() {
   for (int16_t i = 0; i < NUM_LEDS_TOTAL; i++) {
     leds[i] = CRGB::Black;
   }
+
+  FastLED.setBrightness(100);
 }
 
 void loop() {
@@ -77,9 +79,9 @@ void loop() {
   // cyclePalettes();
   // showPalette();
 
-  // twinkle = twinkle.show();
+  twinkle = twinkle.show();
 
-  showBloom();
+  // showBloom();
 
   // rubberBandAnchored();
   // basicSpiralRotation();

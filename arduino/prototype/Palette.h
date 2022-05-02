@@ -9,7 +9,7 @@
 struct Palette {
   CRGBPalette16 currentPalette = *(activePalettes[0]);
   CRGBPalette16 targetPalette = *(activePalettes[0]);
-  uint8_t colorMode = CM_RADIUS_GRADIENT;
+  uint8_t colorMode = CM_PATCHY;
   uint8_t _secondsPerPalette = 10;
 
   Palette setNextColorPalette() {
@@ -33,9 +33,7 @@ struct Palette {
     return *this;
   }
 
-  CRGB getPixelColor(uint8_t p) {
-    return ColorFromPalette(currentPalette, p);
-  }
+  CRGB getPixelColor(uint8_t p) { return ColorFromPalette(currentPalette, p); }
 
   CRGB getColor(uint8_t d) {
     uint8_t paletteIndex = map(d, 0, NUM_DISCS - 1, 0, MAX_PALETTE_INDEX);
@@ -70,6 +68,15 @@ struct Palette {
         break;
       }
       case CM_PATCHY: {
+        uint16_t maxRadius = MAX_RADIUS_DISC[0];
+        uint16_t maxAngle = 360;
+        uint8_t r =
+            map(maxRadius - discs[d].radius(p), 0, maxRadius, 0, 510) % 255;
+        uint8_t g =
+            map(maxAngle - discs[d].angle(p), 0, maxAngle, 0, 510) % 255;
+        uint8_t b =
+            map(maxRadius - maxRadius / 2, -maxRadius, maxRadius, 0, 510) % 255;
+        return CRGB(r, g, b);
         break;
       }
       default:

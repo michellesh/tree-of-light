@@ -26,12 +26,13 @@ struct Twinkle {
         PRNG16 = (uint16_t)(PRNG16 * 2053) + 1384;  // next 'random' number
         uint16_t myclockoffset16 = PRNG16;  // use that number as clock offset
         PRNG16 = (uint16_t)(PRNG16 * 2053) + 1384;  // next 'random' number
-        // use that number as clock speed adjustment factor (in 8ths, from 8/8ths
-        // to 23/8ths)
+        // use that number as clock speed adjustment factor (in 8ths, from
+        // 8/8ths to 23/8ths)
         uint8_t myspeedmultiplierQ5_3 =
             ((((PRNG16 & 0xFF) >> 4) + (PRNG16 & 0x0F)) & 0x0F) + 0x08;
         uint32_t myclock30 =
-            (uint32_t)((clock32 * myspeedmultiplierQ5_3) >> 3) + myclockoffset16;
+            (uint32_t)((clock32 * myspeedmultiplierQ5_3) >> 3) +
+            myclockoffset16;
         uint8_t myunique8 = PRNG16 >> 8;  // get 'salt' value for this pixel
 
         // We now have the adjusted 'clock' for this pixel, now we call
@@ -55,9 +56,11 @@ struct Twinkle {
 
     uint8_t bright =
         ((slowcycle8 & 0x0E) / 2) < _density ? attackDecayWave8(fastcycle8) : 0;
-    uint8_t hue = slowcycle8 - salt;
 
-    CRGB color = palette.getPixelColor(hue);
+    // uint8_t hue = slowcycle8 - salt;
+    // CRGB color = palette.getPixelColor(hue);
+
+    CRGB color = palette.getColor(d, p);
     return bright > 0 ? color.nscale8(bright) : CRGB::Black;
   }
 };
