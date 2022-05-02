@@ -23,11 +23,17 @@ Bloom bloom, bloom2;
 Spiral spiral, spiral2, spiral3;
 Twinkle twinkle;
 
+void logMemory() {
+  Serial.print("Used PSRAM: ");
+  Serial.println(ESP.getPsramSize() - ESP.getFreePsram());
+}
+
 void setup() {
   Serial.begin(115200);
   delay(500);
 
-  leds = new CRGB[NUM_LEDS_TOTAL];
+  leds = (CRGB *)ps_malloc(sizeof(CRGB) * NUM_LEDS_TOTAL);
+  logMemory();
 
   uint16_t startIndex = 0;
   FastLED.addLeds<NEOPIXEL, PIN_1>(leds, startIndex, NUM_LEDS_PIN_1);
@@ -86,14 +92,14 @@ void loop() {
     // bloom2 = bloom2.reverse();
   }
 
-  // twinkle = twinkle.show();
+  twinkle = twinkle.show();
 
   // rubberBandAnchored();
   // basicSpiralRotation();
   // rubberBandNoAnchor();
   // rubberBandWorm();
   // continuousSpiral();
-  growingSpirals();
+  // growingSpirals();
 
   EVERY_N_MILLISECONDS(5000) {
     // spiral = spiral.reverse();
