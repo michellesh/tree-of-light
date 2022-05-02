@@ -68,15 +68,12 @@ struct Palette {
         break;
       }
       case CM_PATCHY: {
-        uint16_t maxRadius = MAX_RADIUS_DISC[0];
-        uint16_t maxAngle = 360;
-        uint8_t r =
-            map(maxRadius - discs[d].radius(p), 0, maxRadius, 0, 510) % 255;
-        uint8_t g =
-            map(maxAngle - discs[d].angle(p), 0, maxAngle, 0, 510) % 255;
-        uint8_t b =
-            map(maxRadius - maxRadius / 2, -maxRadius, maxRadius, 0, 510) % 255;
-        return CRGB(r, g, b);
+        uint16_t maxRadius = sinwave(0, 250, 400);
+        uint16_t maxAngle = sinwave(0, 360, 400);
+        uint8_t r = abs(maxRadius - discs[d].radius(p));
+        uint8_t g = abs(maxAngle - discs[d].angle(p)) % 255;
+        uint8_t b = maxRadius / 2;
+        paletteIndex = r + g + b;  // CRGB(r, g, b)
         break;
       }
       default:
