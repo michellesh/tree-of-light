@@ -59,3 +59,11 @@ uint8_t attackDecayWave8(uint8_t i) {
     return 255 - (i + (i / 2));
   }
 }
+
+CRGB getColorBetween(CRGB color1, CRGB color2, float percent = 0.5) {
+  return CRGB(
+    color1.r + percent * (color2.r - color1.r),
+    color1.g + percent * (color2.g - color1.g),
+    color1.b + percent * (color2.b - color1.b)
+  );
+}

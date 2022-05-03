@@ -36,8 +36,8 @@ CRGBPalette16 fairyPalette = _fairyPalette;
 
 // clang-format off
 CRGBPalette16* activePalettes[] = {
-  &tealGreenGold,
   &redRoseLavendar,
+  &tealGreenGold,
   //&firePalette,
   &icePalette,
   &fairyPalette

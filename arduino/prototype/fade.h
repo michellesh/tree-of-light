@@ -40,7 +40,11 @@ bool isBetween(int16_t value, int16_t min, int16_t max,
   return inclusive ? value >= min && value <= max : value > min && value < max;
 }
 
-uint8_t mapDistToBrightness(uint8_t x, uint8_t mode = FADE_CUSTOM) {
+bool isBetweenI(int16_t value, int16_t min, int16_t max) {
+  return isBetween(value, min, max, true);
+}
+
+uint8_t addFadeShape(uint8_t x, uint8_t mode = FADE_CUSTOM) {
   switch (mode) {
     case FADE_CUSTOM:
       return fadeShape(x, {60, 20});

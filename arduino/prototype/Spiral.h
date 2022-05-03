@@ -3,7 +3,7 @@ uint8_t PERCENT_HEIGHT_DISC[] = {100, 89, 78, 67, 56, 45, 34, 23, 12};
 struct Spiral {
   Range WIDTH = {10, 90, 90};  // How many degrees along the circumference at
                                // the current angle to light up
-  Range SPEED = {1, 10, 2};    // How many degrees to add to the current
+  Range SPEED = {1, 10, 3};    // How many degrees to add to the current
                                // angle each time
   Range DISC_OFFSET = {20, 90, 30};  // How many degrees to increase angle per
                                      // disc higher = tighter spiral
@@ -15,8 +15,8 @@ struct Spiral {
   int16_t _discOffset[NUM_DISCS] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   uint8_t _minRadius[NUM_DISCS] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   uint8_t _maxRadius[NUM_DISCS] = {100, 100, 100, 100, 100, 100, 100, 100, 100};
-  uint8_t _minHeightPercent = 0;
-  uint8_t _maxHeightPercent = 100;
+  uint8_t _heightBrightness[NUM_DISCS] = {255, 255, 255, 255, 255,
+                                          255, 255, 255, 255};
 
   Spiral width(int16_t width) {
     _width = abs(width);
@@ -25,6 +25,11 @@ struct Spiral {
 
   Spiral speed(int16_t speed) {
     _speed = speed;
+    return *this;
+  }
+
+  Spiral angle(int16_t angle) {
+    _angle = angle;
     return *this;
   }
 
@@ -52,53 +57,38 @@ struct Spiral {
   }
 
   Spiral heightRangePercent(uint8_t min, uint8_t max) {
-    _minHeightPercent = min;
-    _maxHeightPercent = max;
-    return *this;
-  }
+    uint8_t fade = 50;  // how much percent of full height to add fade
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      if (min == 0 && max == 100) {
+        _heightBrightness[d] = 255;
+      }
 
-  Spiral angle(int16_t angle) {
-    _angle = angle;
-    return *this;
-  }
-
-  uint8_t radiusRangeBrightness(uint8_t d) {
-    uint8_t percentFade = 50;
-    uint8_t height = PERCENT_HEIGHT_DISC[d];
-    if (isBetween(height, _minHeightPercent, _minHeightPercent + percentFade,
-                  true)) {
-      return map(height, _minHeightPercent, _minHeightPercent + percentFade, 0,
-                 255);
-    } else if (isBetween(height, _maxHeightPercent - percentFade,
-                         _maxHeightPercent, true)) {
-      return map(height, _maxHeightPercent - percentFade, _maxHeightPercent,
-                 255, 0);
-    } else if (_minHeightPercent < _maxHeightPercent) {
-      return isBetween(height, _minHeightPercent + percentFade,
-                       _maxHeightPercent - percentFade, true)
-                 ? 255
-                 : 0;
-    } else {
-      return isBetween(height, _maxHeightPercent, _minHeightPercent, true)
-                 ? 0
-                 : 255;
+      uint8_t height = PERCENT_HEIGHT_DISC[d];
+      _heightBrightness[d] =
+          isBetweenI(height, min, min + fade)
+              ? map(height, min, min + fade, 0, 255)
+          : isBetweenI(height, max - fade, max)
+              ? map(height, max - fade, max, 255, 0)
+          : min < max ? (isBetweenI(height, min + fade, max - fade) ? 255 : 0)
+                      : (isBetweenI(height, max, min) ? 0 : 255);
     }
+    return *this;
   }
 
   Spiral show() {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
       for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
-        // Set the LED color if its in range of the current angle
-        // If angle is near beginning (0 degrees), also check LEDs near
-        // end. If angle is near end (360 degrees), also check LEDs near
-        // beginning
-        int16_t angle = (_angle + _discOffset[d] + 360) % 360;
-        if (setLED(d, p, angle) ||
-            (angle < _width && setLED(d, p, 360 + angle)) ||
-            (angle > 360 - _width && setLED(d, p, angle - 360))) {
-          continue;
+        uint8_t brightness = getBrightness(d, p);
+        if (brightness > 0) {
+          CRGB color = palette.getColor(_id * 2).nscale8(brightness);
+          if (discs[d].brightness[p] == 0) {
+            discs[d].leds[p] = color;
+            discs[d].brightness[p] = brightness;
+          } else {
+            discs[d].leds[p] = getColorBetween(color, discs[d].leds[p]);
+            discs[d].brightness[p] = (discs[d].brightness[p] + brightness) / 2;
+          }
         }
-        // discs[d].leds[p] = CRGB::Black;
       }
     }
 
@@ -108,27 +98,30 @@ struct Spiral {
     return *this;
   }
 
-  // Sets the LED color if the LED's angle is close to the current
-  // angle. Returns true if the LED was turned on
-  bool setLED(uint8_t d, uint8_t p, int16_t angle) {
-    int16_t dist = angle - discs[d].angle(p);
-    if (dist > 0 && dist < _width) {
-      uint8_t brightness = mapDistToBrightness(map(dist, 0, _width, 0, 255));
-      uint8_t radiusFade = radiusRangeBrightness(d);
-      brightness = min(brightness, radiusFade);
-      if (!isBetween(discs[d].radius(p), _minRadius[d], _maxRadius[d]) ||
-          (_speed < 3 && brightness < 5)) {
-        brightness = 0;
-      }
-      discs[d].leds[p] = palette.getColor(_id * 2).nscale8(brightness);
-      // discs[d].leds[p] = palette.getColor(d, p).nscale8(brightness);
-      return true;
+  // Gets the brightness of the LED if the LED's angle is close to the current
+  // angle
+  uint8_t getBrightness(uint8_t d, uint8_t p) {
+    if (!isBetween(discs[d].radius(p), _minRadius[d], _maxRadius[d])) {
+      return 0;
     }
-    if (_speed >= 3 && isBetween(dist, -20, 0) ||
-        isBetween(dist, _width, _width + 20)) {
-      discs[d].leds[p] = CRGB::Black;
-      return true;
-    }
-    return false;
-  }
+
+    int16_t targetAngle = (_angle + _discOffset[d] + 360) % 360;
+    int16_t pixelAngle = discs[d].angle(p);
+
+    // Calculate distance from the current angle. If angle is near end
+    // (360-width < a < 360), also check LEDs near beginning. If angle is near
+    // beginning (0 < a < width), also check LEDs near end
+    int16_t dist = isBetween(targetAngle - pixelAngle, 0, _width)
+                       ? targetAngle - pixelAngle
+                   : targetAngle > 360 - _width &&
+                           isBetween(targetAngle - 360 - pixelAngle, 0, _width)
+                       ? targetAngle - 360 - pixelAngle
+                   : targetAngle < _width &&
+                           isBetween(targetAngle + 360 - pixelAngle, 0, _width)
+                       ? targetAngle + 360 - pixelAngle
+                       : 0;
+
+    uint8_t brightness = addFadeShape(map(dist, 0, _width, 0, 255));
+    return min(brightness, _heightBrightness[d]);
+  };
 };

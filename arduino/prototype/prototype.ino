@@ -10,6 +10,7 @@
 
 Disc discs[NUM_DISCS];
 CRGB *leds;
+uint8_t *ledBrightness;
 
 #include "Palette.h"
 Palette palette;
@@ -33,6 +34,7 @@ void setup() {
   delay(500);
 
   leds = (CRGB *)ps_malloc(sizeof(CRGB) * NUM_LEDS_TOTAL);
+  ledBrightness = (uint8_t *)ps_malloc(sizeof(uint8_t) * NUM_LEDS_TOTAL);
   logMemory();
 
   uint16_t startIndex = 0;
@@ -57,9 +59,9 @@ void setup() {
                  NUM_LEDS_PETAL[d][0],
                  NUM_LEDS_PETAL[d][1],
                  NUM_LEDS_PETAL[d][2],
-                 offset,
+                 MAX_RADIUS_DISC[d],
                  &leds[offset],
-                 MAX_RADIUS_DISC[d]};
+                 &ledBrightness[offset]};
 
     discs[d] = disc;
     offset += disc.numLEDs;
@@ -74,16 +76,17 @@ void setup() {
 }
 
 void loop() {
+  clearLEDs();
   palette = palette.cycle();
 
   // cyclePalettes();
   // showPalette();
 
-  twinkle = twinkle.show();
+  // twinkle = twinkle.show();
 
   // showBloom();
 
-  // rubberBandAnchored();
+  rubberBandAnchored();
   // basicSpiralRotation();
   // rubberBandNoAnchor();
   // rubberBandWorm();
@@ -102,10 +105,10 @@ void loop() {
 
 void showBloom() {
   if (ticks == 0) {
-    bloom = bloom.group(0).initStartSame();
+    bloom = bloom.group(0).initUpward();
     bloom2 = bloom2.group(1)
                  .offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2)
-                 .initStartSame();
+                 .initUpward();
   }
 
   // cycleBloomTypes();
@@ -114,8 +117,8 @@ void showBloom() {
   bloom2 = bloom2.show();
 
   EVERY_N_MILLISECONDS(1000) {
-    // bloom = bloom.reverse();
-    // bloom2 = bloom2.reverse();
+    bloom = bloom.reverse();
+    bloom2 = bloom2.reverse();
   }
 }
 
@@ -207,8 +210,8 @@ void rubberBandAnchored() {
 
 void basicSpiralRotation() {
   if (ticks == 0) {
-    spiral = spiral.id(1).radiusRangePercent(50, 100).speed(3);
-    spiral2 = spiral2.id(2).radiusRangePercent(50, 100).speed(-3);
+    spiral = spiral.id(1).radiusRangePercent(50, 100).speed(2);
+    spiral2 = spiral2.id(2).radiusRangePercent(50, 100).speed(-2);
 
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
       spiral = spiral.discOffset(d, (NUM_DISCS - 1 - d) * 30);
@@ -282,4 +285,11 @@ void showPalette() {
     }
   }
   FastLED.show();
+}
+
+void clearLEDs() {
+  for (uint16_t i = 0; i < NUM_LEDS_TOTAL; i++) {
+    ledBrightness[i] = 0;
+    leds[i].nscale8(0);
+  }
 }

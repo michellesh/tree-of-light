@@ -36,7 +36,7 @@ struct Ripple {
     for (uint8_t p = 0; p < discs[discIndex].numLEDs; p++) {
       int16_t dist = radius - discs[discIndex].radius(p);
       if (dist > 0 && dist < width) {
-        uint8_t brightness = mapDistToBrightness(map(dist, 0, width, 0, 255));
+        uint8_t brightness = addFadeShape(map(dist, 0, width, 0, 255));
         discs[discIndex].leds[p] = palette.getColor(colorIndex);
         discs[discIndex].leds[p].nscale8(brightness);
       } else if (isBetween(dist, -10, 0) ||

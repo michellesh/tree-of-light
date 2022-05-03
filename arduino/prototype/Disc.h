@@ -4,9 +4,9 @@ struct Disc {
   uint8_t numLEDsP1;  // number of LEDs in first segment of inner petal
   uint8_t numLEDsP2;  // number of LEDs in second segment of inner petal
   uint8_t numLEDsP3;  // number of LEDs in outer petal segment
-  uint16_t offset;    // number of LEDs in tree before this disc
-  CRGB *leds;         // the LEDs for this disc
   uint16_t maxRadius;
+  CRGB *leds;           // the LEDs for this disc
+  uint8_t *brightness;  // the brightness of the LEDs for this disc
 
   int16_t radius(uint8_t pixelIndex) {
     return RADII[discIndex][pixelIndex % (numLEDs / NUM_PETAL_GROUPS)];
