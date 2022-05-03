@@ -1,21 +1,35 @@
-struct Twinkle {
-  Range SPEED = {1, 8, 4};
-  Range DENSITY = {1, 8, 5};
-
+class Twinkle : public Pattern {
+ private:
   uint8_t _speed = SPEED.DFLT;
   uint8_t _density = DENSITY.DFLT;
 
-  Twinkle speed(uint8_t speed) {
-    _speed = speed;
-    return *this;
-  };
+  CRGB _getColor(uint8_t d, uint8_t p, uint32_t ms, uint8_t salt) {
+    uint16_t ticks = ms >> (8 - _speed);
+    uint8_t fastcycle8 = ticks;
+    uint16_t slowcycle16 = (ticks >> 8) + salt;
+    slowcycle16 += sin8(slowcycle16);
+    slowcycle16 = (slowcycle16 * 2053) + 1384;
+    uint8_t slowcycle8 = (slowcycle16 & 0xFF) + (slowcycle16 >> 8);
 
-  Twinkle density(uint8_t density) {
-    _density = density;
-    return *this;
-  };
+    uint8_t bright =
+        ((slowcycle8 & 0x0E) / 2) < _density ? attackDecayWave8(fastcycle8) : 0;
 
-  Twinkle show() {
+    // uint8_t hue = slowcycle8 - salt;
+    // CRGB color = palette.getPixelColor(hue);
+
+    CRGB color = palette.getColor(d, p);
+    return bright > 0 ? color.nscale8(bright) : CRGB::Black;
+  }
+
+ public:
+  static constexpr Range SPEED = {1, 8, 4};
+  static constexpr Range DENSITY = {1, 8, 5};
+
+  void setSpeed(uint8_t speed) { _speed = speed; }
+
+  void setDensity(uint8_t density) { _density = density; }
+
+  void show() {
     uint16_t PRNG16 = 11337;
     uint32_t clock32 = millis();
 
@@ -41,26 +55,5 @@ struct Twinkle {
         discs[d].leds[p] = _getColor(d, p, myclock30, myunique8);
       }
     }
-
-    FastLED.show();
-    return *this;
-  }
-
-  CRGB _getColor(uint8_t d, uint8_t p, uint32_t ms, uint8_t salt) {
-    uint16_t ticks = ms >> (8 - _speed);
-    uint8_t fastcycle8 = ticks;
-    uint16_t slowcycle16 = (ticks >> 8) + salt;
-    slowcycle16 += sin8(slowcycle16);
-    slowcycle16 = (slowcycle16 * 2053) + 1384;
-    uint8_t slowcycle8 = (slowcycle16 & 0xFF) + (slowcycle16 >> 8);
-
-    uint8_t bright =
-        ((slowcycle8 & 0x0E) / 2) < _density ? attackDecayWave8(fastcycle8) : 0;
-
-    // uint8_t hue = slowcycle8 - salt;
-    // CRGB color = palette.getPixelColor(hue);
-
-    CRGB color = palette.getColor(d, p);
-    return bright > 0 ? color.nscale8(bright) : CRGB::Black;
   }
 };

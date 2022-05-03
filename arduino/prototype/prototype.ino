@@ -16,6 +16,7 @@ uint8_t *ledBrightness;
 Palette palette;
 
 #include "Range.h"
+#include "Pattern.h"
 #include "Bloom.h"
 #include "Spiral.h"
 #include "Twinkle.h"
@@ -82,11 +83,11 @@ void loop() {
   // cyclePalettes();
   // showPalette();
 
-  // twinkle = twinkle.show();
+  twinkle.show();
 
   // showBloom();
 
-  rubberBandAnchored();
+  // rubberBandAnchored();
   // basicSpiralRotation();
   // rubberBandNoAnchor();
   // rubberBandWorm();
