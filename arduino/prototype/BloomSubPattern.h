@@ -5,6 +5,7 @@ class BloomSubPattern : public SubPattern {
   Bloom _blooms[MAX_BLOOMS];
   uint8_t _numBlooms = MAX_BLOOMS;
   uint8_t _activeSubPattern = 0;
+  uint8_t _percentBrightness = 0;  // percent brightness of the whole pattern
 
  public:
   static const uint8_t CONTINUOUS = 0;
@@ -46,7 +47,16 @@ class BloomSubPattern : public SubPattern {
     }
   }
 
-  void show() {
+  virtual uint8_t getPercentBrightness() { return _percentBrightness; }
+
+  virtual void setPercentBrightness(uint8_t percentBrightness) {
+    _percentBrightness = percentBrightness;
+    for (uint8_t i = 0; i < _numBlooms; i++) {
+      _blooms[i].setPercentBrightness(percentBrightness);
+    }
+  }
+
+  virtual void show() {
     for (uint8_t i = 0; i < _numBlooms; i++) {
       _blooms[i].show();
     }

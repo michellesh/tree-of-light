@@ -1,4 +1,8 @@
 class SubPattern {
  public:
-  uint8_t brightness = 100;  // TODO
+  virtual uint8_t getPercentBrightness() {}
+
+  virtual void setPercentBrightness(uint8_t percentBrightness) {}
+
+  virtual void show() {}
 };

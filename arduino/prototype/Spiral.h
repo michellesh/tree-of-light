@@ -89,7 +89,8 @@ class Spiral : public Pattern {
       for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
         uint8_t brightness = _getBrightness(d, p);
         if (brightness > 0) {
-          CRGB color = palette.getColor(_id * 2).nscale8(brightness);
+          CRGB color = palette.getColor(_id * 2).nscale8(
+              brightness * getPercentBrightness() / 100);
           if (discs[d].brightness[p] == 0) {
             discs[d].leds[p] = color;
             discs[d].brightness[p] = brightness;

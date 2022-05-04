@@ -42,13 +42,13 @@ class Ripple {
     }
   }
 
-  void show(int16_t width) {
+  void show(int16_t width, uint8_t percentBrightness) {
     for (uint8_t p = 0; p < discs[_discIndex].numLEDs; p++) {
       int16_t dist = _radius - discs[_discIndex].radius(p);
       if (dist > 0 && dist < width) {
         uint8_t brightness = addFadeShape(map(dist, 0, width, 0, 255));
         discs[_discIndex].leds[p] = palette.getColor(_colorIndex);
-        discs[_discIndex].leds[p].nscale8(brightness);
+        discs[_discIndex].leds[p].nscale8(brightness * percentBrightness / 100);
       } else if (isBetween(dist, -10, 0) ||
                  isBetween(dist, width, width + 10)) {
         // this just ensures that the pixels go back to black after the ripple
@@ -99,7 +99,7 @@ class Bloom : public Pattern {
 
   void show() {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      _ripples[d].show(_width);
+      _ripples[d].show(_width, getPercentBrightness());
       _ripples[d].updateRadius(_speed, _width);
     }
   }

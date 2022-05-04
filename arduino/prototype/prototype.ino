@@ -40,6 +40,12 @@ SpiralSubPattern growingSpirals(SpiralSubPattern::GROWING_SPIRALS);
 SpiralSubPattern basicSpiralRotation(SpiralSubPattern::BASIC_SPIRAL_ROTATION);
 SpiralSubPattern continuousSpiral(SpiralSubPattern::CONTINUOUS_SPIRAL);
 
+SubPattern *activePatterns[] = {&rubberBandWorm, &bloomUpward,
+                                &rubberBandAnchored};
+SubPattern *sourcePattern;
+SubPattern *targetPattern;
+uint8_t numPatterns = sizeof(activePatterns) / sizeof(activePatterns[0]);
+
 void logMemory() {
   Serial.print("Used PSRAM: ");
   Serial.println(ESP.getPsramSize() - ESP.getFreePsram());
@@ -89,13 +95,38 @@ void setup() {
   }
 
   FastLED.setBrightness(100);
+
+  // Set first pattern in activePatterns to be played first
+  sourcePattern = (SubPattern *)activePatterns[numPatterns - 1];
+  sourcePattern->setPercentBrightness(0);
+  targetPattern = (SubPattern *)activePatterns[0];
+  targetPattern->setPercentBrightness(100);
 }
 
 void loop() {
   clearLEDs();
   palette.cycle();
 
-  demoColorModes();
+  EVERY_N_SECONDS(10) {
+    // Increment active pattern
+    sourcePattern = (SubPattern *)targetPattern;
+    static uint8_t nextPattern = 0;
+    nextPattern = (nextPattern + 1) % numPatterns;
+    targetPattern = (SubPattern *)(activePatterns[nextPattern]);
+  }
+
+  EVERY_N_MILLISECONDS(100) {
+    shiftPercentBrightnessTo(targetPattern, 100);
+    shiftPercentBrightnessTo(sourcePattern, 0);
+  }
+
+  for (uint8_t i = 0; i < numPatterns; i++) {
+    if (activePatterns[i]->getPercentBrightness() > 0) {
+      activePatterns[i]->show();
+    }
+  }
+
+  // demoColorModes();
 
   // twinkle.show();
 
@@ -105,6 +136,18 @@ void loop() {
 
   FastLED.show();
   ticks++;
+}
+
+void shiftPercentBrightnessTo(SubPattern *pattern,
+                              uint8_t toPercentBrightness) {
+  if (pattern->getPercentBrightness() == toPercentBrightness) {
+    return;
+  } else if (pattern->getPercentBrightness() < toPercentBrightness) {
+    pattern->setPercentBrightness(
+        min(pattern->getPercentBrightness() + 3, 100));
+  } else if (pattern->getPercentBrightness() > toPercentBrightness) {
+    pattern->setPercentBrightness(max(pattern->getPercentBrightness() - 3, 0));
+  }
 }
 
 void clearLEDs() {

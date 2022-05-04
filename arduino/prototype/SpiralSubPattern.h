@@ -5,6 +5,7 @@ class SpiralSubPattern : public SubPattern {
   Spiral _spirals[MAX_SPIRALS];
   uint8_t _numSpirals = MAX_SPIRALS;
   uint8_t _activeSubPattern = 0;
+  uint8_t _percentBrightness = 0;  // percent brightness of the whole pattern
 
   void _showRubberBandWorm() {
     int16_t offset = sinwave(-90, 90, 100);
@@ -150,7 +151,16 @@ class SpiralSubPattern : public SubPattern {
     }
   }
 
-  void show() {
+  virtual uint8_t getPercentBrightness() { return _percentBrightness; }
+
+  virtual void setPercentBrightness(uint8_t percentBrightness) {
+    _percentBrightness = percentBrightness;
+    for (uint8_t i = 0; i < _numSpirals; i++) {
+      _spirals[i].setPercentBrightness(percentBrightness);
+    }
+  }
+
+  virtual void show() {
     switch (_activeSubPattern) {
       case RUBBER_BAND_WORM:
         _showRubberBandWorm();
