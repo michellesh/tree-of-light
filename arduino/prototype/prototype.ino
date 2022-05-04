@@ -93,19 +93,25 @@ void setup() {
 
 void loop() {
   clearLEDs();
-  palette = palette.cycle();
+  palette.cycle();
 
-  // cyclePalettes();
-  // showPalette();
+  demoColorModes();
 
   // twinkle.show();
 
-  bloomDownward.show();
+  // bloomDownward.show();
 
   // continuousSpiral.show();
 
   FastLED.show();
   ticks++;
+}
+
+void clearLEDs() {
+  for (uint16_t i = 0; i < NUM_LEDS_TOTAL; i++) {
+    ledBrightness[i] = 0;
+    leds[i].nscale8(0);
+  }
 }
 
 void plotVars(int numValues, ...) {
@@ -119,29 +125,16 @@ void plotVars(int numValues, ...) {
   Serial.println();
 }
 
-void cyclePalettes() {
+void demoColorModes() {
   // Cycle through color modes for demonstration
-  EVERY_N_SECONDS(15) {
-    palette.colorMode = palette.colorMode < 4 ? palette.colorMode + 1 : 0;
+  EVERY_N_SECONDS(10) {
+    palette.setColorMode((palette.getActiveColorMode() + 1) % 6);
+    Serial.println(palette.getActiveColorMode());
   }
-
-  showPalette();
-}
-
-void showPalette() {
   FastLED.setBrightness(50);
   for (uint8_t d = 0; d < NUM_DISCS; d++) {
     for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
       discs[d].leds[p] = palette.getColor(d, p, true);
-      // discs[d].leds[p] = campfire[d];
     }
-  }
-  FastLED.show();
-}
-
-void clearLEDs() {
-  for (uint16_t i = 0; i < NUM_LEDS_TOTAL; i++) {
-    ledBrightness[i] = 0;
-    leds[i].nscale8(0);
   }
 }
