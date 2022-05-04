@@ -27,11 +27,11 @@ Palette palette;
 
 Twinkle twinkle;
 
-BloomSubPattern bloomContinuous(0, true, 1, false);
-BloomSubPattern bloomStartSame(0, false, 2, false);
-BloomSubPattern bloomEndSame(-20, false, 2, false);
-BloomSubPattern bloomUpward(20, false, 2, true);
-BloomSubPattern bloomDownward(-40, false, 2, true);
+BloomSubPattern bloomContinuous(BloomSubPattern::CONTINUOUS);
+BloomSubPattern bloomStartSame(BloomSubPattern::START_SAME);
+BloomSubPattern bloomEndSame(BloomSubPattern::END_SAME);
+BloomSubPattern bloomUpward(BloomSubPattern::UPWARD);
+BloomSubPattern bloomDownward(BloomSubPattern::DOWNWARD);
 
 SpiralSubPattern rubberBandWorm(SpiralSubPattern::RUBBER_BAND_WORM);
 SpiralSubPattern rubberBandNoAnchor(SpiralSubPattern::RUBBER_BAND_NO_ANCHOR);
@@ -100,7 +100,7 @@ void loop() {
 
   // twinkle.show();
 
-  bloomStartSame.show();
+  bloomDownward.show();
 
   // continuousSpiral.show();
 
