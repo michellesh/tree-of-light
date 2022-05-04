@@ -1,5 +1,3 @@
-uint8_t PERCENT_HEIGHT_DISC[] = {100, 89, 78, 67, 56, 45, 34, 23, 12};
-
 struct Spiral {
   Range WIDTH = {10, 90, 90};  // How many degrees along the circumference at
                                // the current angle to light up

@@ -34,6 +34,8 @@ int16_t NUM_LEDS_TOTAL = NUM_LEDS_PIN_1 + NUM_LEDS_PIN_2 + NUM_LEDS_PIN_3 +
 
 uint8_t NUM_LEDS_DISC[] = {240, 216, 186, 168, 150, 120, 90, 72, 42};
 
+uint8_t PERCENT_HEIGHT_DISC[] = {100, 89, 78, 67, 56, 45, 34, 23, 12};
+
 uint8_t NUM_LEDS_PETAL[NUM_DISCS][3] = {{8, 10, 6}, {8, 9, 5}, {7, 7, 5},
                                         {6, 7, 4},  {5, 6, 4}, {4, 5, 3},
                                         {3, 4, 2},  {2, 3, 2}, {1, 2, 1}};

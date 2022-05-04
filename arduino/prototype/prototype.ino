@@ -21,9 +21,17 @@ Palette palette;
 #include "Spiral.h"
 #include "Twinkle.h"
 
-Bloom bloom, bloom2;
+#include "SubPattern.h"
+#include "BloomSubPattern.h"
+
 Spiral spiral, spiral2, spiral3;
 Twinkle twinkle;
+
+BloomSubPattern bloomContinuous(0, true, 1, false);
+BloomSubPattern bloomStartSame(0, false, 2, false);
+BloomSubPattern bloomEndSame(-20, false, 2, false);
+BloomSubPattern bloomUpward(20, false, 2, true);
+BloomSubPattern bloomDownward(-40, false, 2, true);
 
 void logMemory() {
   Serial.print("Used PSRAM: ");
@@ -83,9 +91,9 @@ void loop() {
   // cyclePalettes();
   // showPalette();
 
-  twinkle.show();
+  // twinkle.show();
 
-  // showBloom();
+  bloomStartSame.show();
 
   // rubberBandAnchored();
   // basicSpiralRotation();
@@ -104,24 +112,6 @@ void loop() {
   ticks++;
 }
 
-void showBloom() {
-  if (ticks == 0) {
-    bloom = bloom.group(0).initUpward();
-    bloom2 = bloom2.group(1)
-                 .offset(bloom.OFFSET.MAX / 2 + bloom.WIDTH.DFLT / 2)
-                 .initUpward();
-  }
-
-  // cycleBloomTypes();
-
-  bloom = bloom.show();
-  bloom2 = bloom2.show();
-
-  EVERY_N_MILLISECONDS(1000) {
-    bloom = bloom.reverse();
-    bloom2 = bloom2.reverse();
-  }
-}
 
 void plotVars(int numValues, ...) {
   va_list values;
@@ -243,29 +233,6 @@ void continuousSpiral() {
   }
   spiral = spiral.show();
   plotVars(3, 4 * offset, 4 * width, 4 * speed * 100);
-}
-
-int bloomType = 0;
-void cycleBloomTypes() {
-  EVERY_N_SECONDS(10) {
-    bloomType++;
-    if (bloomType >= 5) {
-      bloomType = 0;
-    }
-    if (bloomType == 0) {
-      bloom = bloom.initStartSame();
-    } else if (bloomType == 1) {
-      bloom = bloom.initUpward();
-    } else if (bloomType == 2) {
-      bloom = bloom.initDownward();
-    } else if (bloomType == 3) {
-      bloom = bloom.initEndSame();
-    } else {
-      bloom = bloom.initContinuous();
-    }
-  }
-
-  bloom = bloom.show();
 }
 
 void cyclePalettes() {
