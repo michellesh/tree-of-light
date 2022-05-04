@@ -23,8 +23,8 @@ Palette palette;
 
 #include "SubPattern.h"
 #include "BloomSubPattern.h"
+#include "SpiralSubPattern.h"
 
-Spiral spiral, spiral2, spiral3;
 Twinkle twinkle;
 
 BloomSubPattern bloomContinuous(0, true, 1, false);
@@ -32,6 +32,13 @@ BloomSubPattern bloomStartSame(0, false, 2, false);
 BloomSubPattern bloomEndSame(-20, false, 2, false);
 BloomSubPattern bloomUpward(20, false, 2, true);
 BloomSubPattern bloomDownward(-40, false, 2, true);
+
+SpiralSubPattern rubberBandWorm(SpiralSubPattern::RUBBER_BAND_WORM);
+SpiralSubPattern rubberBandNoAnchor(SpiralSubPattern::RUBBER_BAND_NO_ANCHOR);
+SpiralSubPattern rubberBandAnchored(SpiralSubPattern::RUBBER_BAND_ANCHORED);
+SpiralSubPattern growingSpirals(SpiralSubPattern::GROWING_SPIRALS);
+SpiralSubPattern basicSpiralRotation(SpiralSubPattern::BASIC_SPIRAL_ROTATION);
+SpiralSubPattern continuousSpiral(SpiralSubPattern::CONTINUOUS_SPIRAL);
 
 void logMemory() {
   Serial.print("Used PSRAM: ");
@@ -95,23 +102,11 @@ void loop() {
 
   bloomStartSame.show();
 
-  // rubberBandAnchored();
-  // basicSpiralRotation();
-  // rubberBandNoAnchor();
-  // rubberBandWorm();
-  // continuousSpiral();
-  // growingSpirals();
-
-  EVERY_N_MILLISECONDS(5000) {
-    // spiral = spiral.reverse();
-    // spiral2 = spiral2.reverse();
-    // spiral3 = spiral3.reverse();
-  }
+  // continuousSpiral.show();
 
   FastLED.show();
   ticks++;
 }
-
 
 void plotVars(int numValues, ...) {
   va_list values;
@@ -122,117 +117,6 @@ void plotVars(int numValues, ...) {
   }
   va_end(values);
   Serial.println();
-}
-
-void growingSpirals() {
-  if (ticks == 0) {
-    spiral = spiral.id(1).radiusRangePercent(50, 100).speed(0).angle(0);
-    spiral2 = spiral2.id(2).radiusRangePercent(50, 100).speed(0).angle(120);
-    spiral3 = spiral3.id(3).radiusRangePercent(50, 100).speed(0).angle(240);
-    for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      spiral = spiral.discOffset(d, d * 30);
-      spiral2 = spiral2.discOffset(d, d * 30);
-      spiral3 = spiral3.discOffset(d, d * 30);
-    }
-  }
-
-  unsigned long w = 100;  // waveLength
-  unsigned long wo = 33;  // waveLengthOffset
-  spiral =
-      spiral
-          .heightRangePercent(sawtooth(-50, 150, w, wo), sawtooth(-50, 150, w))
-          .show();
-  spiral2 = spiral2
-                .heightRangePercent(sawtooth(-50, 150, w, wo * 2),
-                                    sawtooth(-50, 150, w, wo))
-                .show();
-  spiral3 = spiral3
-                .heightRangePercent(sawtooth(-50, 150, w, w),
-                                    sawtooth(-50, 150, w, wo * 2))
-                .show();
-}
-
-void rubberBandWorm() {
-  if (ticks == 0) {
-    spiral = spiral.radiusRangePercent(50, 100);
-  }
-
-  int16_t offset = sinwave(-90, 90, 100);
-  int16_t width = sinwave(-180, 180, 100);
-  int16_t speed = sinwave(3, 6);
-
-  for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    spiral = spiral.speed(speed).discOffset(d, d * offset).width(abs(width));
-  }
-  spiral = spiral.show();
-}
-
-void rubberBandNoAnchor() {
-  if (ticks == 0) {
-    spiral = spiral.radiusRangePercent(50, 100).speed(0);
-  }
-
-  int16_t angle = sinwave(-200, 200, 200);
-  int16_t offset = sinwave(-90, 90, 200);
-  int16_t width = sinwave(-180, 180, 200);
-
-  for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    spiral = spiral.angle(angle).discOffset(d, d * offset).width(abs(width));
-  }
-  spiral = spiral.show();
-}
-
-void rubberBandAnchored() {
-  if (ticks == 0) {
-    spiral = spiral.radiusRangePercent(50, 100).angle(0).speed(0);
-  }
-
-  int toMin = square(8, 0, 100);
-  int toMax = square(0, 8, 100);
-  // int16_t offset = sinwave(-360, 360, 100);
-  // int16_t offset = sawtooth(-360, 360, 100); // swapping effect
-  int16_t offset = cosSawtooth(-360, 360, 100);
-  for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    int16_t discOffset = mapf(d, toMin, toMax, 0, offset);
-    spiral = spiral.discOffset(d, discOffset);
-  }
-  spiral = spiral.show();
-}
-
-void basicSpiralRotation() {
-  if (ticks == 0) {
-    spiral = spiral.id(1).radiusRangePercent(50, 100).speed(2);
-    spiral2 = spiral2.id(2).radiusRangePercent(50, 100).speed(-2);
-
-    for (uint8_t d = 0; d < NUM_DISCS; d++) {
-      spiral = spiral.discOffset(d, (NUM_DISCS - 1 - d) * 30);
-      spiral2 = spiral2.discOffset(d, d * 30);
-    }
-  }
-
-  spiral = spiral.show();
-  spiral2 = spiral2.show();
-}
-
-void continuousSpiral() {
-  if (ticks == 0) {
-    spiral = spiral.radiusRangePercent(50, 100).speed(3);
-  }
-  unsigned long waveLength = 400;
-  unsigned long waveLengthOffset = waveLength * 3 / 4;
-  int16_t offset = sawtooth(0, 360, waveLength);
-  int16_t width = sinwave(30, 180, waveLength / 2, waveLengthOffset);
-  int16_t minRadiusPercent = sinwave(0, 90, waveLength / 2, waveLengthOffset);
-  int16_t maxRadiusPercent = sinwave(90, 100, waveLength / 2, waveLengthOffset);
-  int16_t speed = sinwave(0, 5, waveLength / 2, waveLengthOffset);
-  for (uint8_t d = 0; d < NUM_DISCS; d++) {
-    spiral = spiral.discOffset(d, (1 + d) * offset)
-                 .width(width)
-                 .speed(speed)
-                 .radiusRangePercent(minRadiusPercent, maxRadiusPercent);
-  }
-  spiral = spiral.show();
-  plotVars(3, 4 * offset, 4 * width, 4 * speed * 100);
 }
 
 void cyclePalettes() {

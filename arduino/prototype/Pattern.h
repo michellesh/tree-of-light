@@ -1,4 +1,4 @@
 class Pattern {
- public:
-  uint8_t id = 0;
+ private:
+  uint8_t _id = 0;
 };
