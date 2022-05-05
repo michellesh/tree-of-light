@@ -3,7 +3,7 @@ class Twinkle : public Pattern {
   uint8_t _speed = SPEED.DFLT;
   uint8_t _density = DENSITY.DFLT;
 
-  CRGB _getColor(uint8_t d, uint8_t p, uint32_t ms, uint8_t salt) {
+  uint8_t _getBrightness(uint32_t ms, uint8_t salt) {
     uint16_t ticks = ms >> (8 - _speed);
     uint8_t fastcycle8 = ticks;
     uint16_t slowcycle16 = (ticks >> 8) + salt;
@@ -11,14 +11,8 @@ class Twinkle : public Pattern {
     slowcycle16 = (slowcycle16 * 2053) + 1384;
     uint8_t slowcycle8 = (slowcycle16 & 0xFF) + (slowcycle16 >> 8);
 
-    uint8_t bright =
-        ((slowcycle8 & 0x0E) / 2) < _density ? attackDecayWave8(fastcycle8) : 0;
-
-    // uint8_t hue = slowcycle8 - salt;
-    // CRGB color = palette.getPixelColor(hue);
-
-    CRGB color = palette.getColor(d, p);
-    return bright > 0 ? color.nscale8(bright) : CRGB::Black;
+    return ((slowcycle8 & 0x0E) / 2) < _density ? attackDecayWave8(fastcycle8)
+                                                : 0;
   }
 
  public:
@@ -52,7 +46,11 @@ class Twinkle : public Pattern {
         // We now have the adjusted 'clock' for this pixel, now we call
         // the function that computes what color the pixel should be based
         // on the "brightness = f( time )" idea.
-        discs[d].leds[p] = _getColor(d, p, myclock30, myunique8);
+        uint8_t brightness = _getBrightness(myclock30, myunique8);
+
+        CRGB color = palette.getColor(d, p).nscale8(
+            brightness * getPercentBrightness() / 100);
+        discs[d].setBlend(p, color, brightness);
       }
     }
   }

@@ -24,8 +24,9 @@ Palette palette;
 #include "SubPattern.h"
 #include "BloomSubPattern.h"
 #include "SpiralSubPattern.h"
+#include "TwinkleSubPattern.h"
 
-Twinkle twinkle;
+TwinkleSubPattern twinkle;
 
 BloomSubPattern bloomContinuous(BloomSubPattern::CONTINUOUS);
 BloomSubPattern bloomStartSame(BloomSubPattern::START_SAME);
@@ -42,6 +43,7 @@ SpiralSubPattern continuousSpiral(SpiralSubPattern::CONTINUOUS_SPIRAL);
 
 // clang-format off
 SubPattern *activePatterns[] = {
+  &twinkle,
   &bloomContinuous,
   &bloomStartSame,
   &bloomEndSame,
@@ -121,7 +123,7 @@ void loop() {
   clearLEDs();
   palette.cycle();
 
-  EVERY_N_SECONDS(10) {
+  EVERY_N_SECONDS(15) {
     // Increment active pattern
     sourcePattern = (SubPattern *)targetPattern;
     static uint8_t nextPattern = 0;
@@ -141,8 +143,6 @@ void loop() {
   }
 
   // demoColorModes();
-
-  // twinkle.show();
 
   FastLED.show();
   ticks++;
