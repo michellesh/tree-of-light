@@ -91,13 +91,7 @@ class Spiral : public Pattern {
         if (brightness > 0) {
           CRGB color = palette.getColor(_id * 2).nscale8(
               brightness * getPercentBrightness() / 100);
-          if (discs[d].brightness[p] == 0) {
-            discs[d].leds[p] = color;
-            discs[d].brightness[p] = brightness;
-          } else {
-            discs[d].leds[p] = getColorBetween(color, discs[d].leds[p]);
-            discs[d].brightness[p] = (discs[d].brightness[p] + brightness) / 2;
-          }
+          discs[d].setBlend(p, color, brightness);
         }
       }
     }

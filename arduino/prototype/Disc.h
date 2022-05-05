@@ -14,6 +14,23 @@ struct Disc {
 
   int16_t angle(uint8_t pixelIndex) { return ANGLES[discIndex][pixelIndex]; }
 
+  void setBrighter(uint8_t pixelIndex, CRGB color, uint8_t colorBrightness) {
+    if (colorBrightness > brightness[pixelIndex]) {
+      leds[pixelIndex] = color;
+      brightness[pixelIndex] = colorBrightness;
+    }
+  }
+
+  void setBlend(uint8_t pixelIndex, CRGB color, uint8_t colorBrightness) {
+    if (brightness[pixelIndex] == 0) {
+      leds[pixelIndex] = color;
+      brightness[pixelIndex] = colorBrightness;
+    } else {
+      leds[pixelIndex] = getColorBetween(color, leds[pixelIndex]);
+      brightness[pixelIndex] = (brightness[pixelIndex] + colorBrightness) / 2;
+    }
+  }
+
   uint8_t petalIndex(uint8_t pixelIndex) {
     uint8_t petalGroupIndex = pixelIndex % (numLEDs / NUM_PETAL_GROUPS);
     uint8_t segment = numLEDsP1 + numLEDsP2;

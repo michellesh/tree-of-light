@@ -40,8 +40,22 @@ SpiralSubPattern growingSpirals(SpiralSubPattern::GROWING_SPIRALS);
 SpiralSubPattern basicSpiralRotation(SpiralSubPattern::BASIC_SPIRAL_ROTATION);
 SpiralSubPattern continuousSpiral(SpiralSubPattern::CONTINUOUS_SPIRAL);
 
-SubPattern *activePatterns[] = {&rubberBandWorm, &bloomUpward,
-                                &rubberBandAnchored};
+// clang-format off
+SubPattern *activePatterns[] = {
+  &bloomContinuous,
+  &bloomStartSame,
+  &bloomEndSame,
+  &bloomUpward,
+  &bloomDownward,
+  &rubberBandWorm,
+  &rubberBandNoAnchor,
+  &rubberBandAnchored,
+  &growingSpirals,
+  &basicSpiralRotation,
+  &continuousSpiral
+};
+// clang-format on
+
 SubPattern *sourcePattern;
 SubPattern *targetPattern;
 uint8_t numPatterns = sizeof(activePatterns) / sizeof(activePatterns[0]);
@@ -129,10 +143,6 @@ void loop() {
   // demoColorModes();
 
   // twinkle.show();
-
-  // bloomDownward.show();
-
-  // continuousSpiral.show();
 
   FastLED.show();
   ticks++;
