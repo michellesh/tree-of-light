@@ -1,6 +1,8 @@
 #define FASTLED_ESP8266_NODEMCU_PIN_ORDER
 #include <Arduino.h>
 #include <FastLED.h>
+#include <WiFi.h>
+#include <esp_now.h>
 
 #include "globals.h"
 #include "colors.h"
@@ -11,6 +13,9 @@
 Disc discs[NUM_DISCS];
 CRGB *leds;
 uint8_t *ledBrightness;
+
+#include "tree-of-light-shared.h"
+msg data;
 
 #include "Palette.h"
 Palette palette;
@@ -71,8 +76,17 @@ void setup() {
   Serial.begin(115200);
   delay(500);
 
-  leds = (CRGB *)ps_malloc(sizeof(CRGB) * NUM_LEDS_TOTAL);
-  ledBrightness = (uint8_t *)ps_malloc(sizeof(uint8_t) * NUM_LEDS_TOTAL);
+  WiFi.mode(WIFI_STA);
+
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+
+  esp_now_register_recv_cb(onDataRecv);
+
+  leds = new CRGB[NUM_LEDS_TOTAL];
+  ledBrightness = new uint8_t[NUM_LEDS_TOTAL];
   logMemory();
 
   uint16_t startIndex = 0;
@@ -117,6 +131,43 @@ void setup() {
   sourcePattern->setPercentBrightness(0);
   targetPattern = (SubPattern *)activePatterns[0];
   targetPattern->setPercentBrightness(100);
+}
+
+// Callback function that will be executed when data is received
+void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&data, incomingData, sizeof(data));
+
+  // Button actions
+  if (data.action == RED_BUTTON) {
+    Serial.print("RED_BUTTON: ");
+    Serial.println(data.value);
+  } else if (data.action == BLUE_BUTTON) {
+    Serial.print("BLUE_BUTTON: ");
+    Serial.println(data.value);
+  } else if (data.action == YELLOW_BUTTON) {
+    Serial.print("YELLOW_BUTTON: ");
+    Serial.println(data.value);
+  } else if (data.action == GREEN_BUTTON) {
+    Serial.print("GREEN_BUTTON: ");
+    Serial.println(data.value);
+  } else if (data.action == WHITE_BUTTON) {
+    Serial.print("WHITE_BUTTON: ");
+    Serial.println(data.value);
+
+  // Slider actions
+  } else if (data.action == SLIDER_1) {
+    Serial.print("SLIDER_1: ");
+    Serial.println(data.value);
+  } else if (data.action == SLIDER_2) {
+    Serial.print("SLIDER_2: ");
+    Serial.println(data.value);
+  } else if (data.action == SLIDER_3) {
+    Serial.print("SLIDER_3: ");
+    Serial.println(data.value);
+  } else if (data.action == SLIDER_4) {
+    Serial.print("SLIDER_4: ");
+    Serial.println(data.value);
+  }
 }
 
 void loop() {
