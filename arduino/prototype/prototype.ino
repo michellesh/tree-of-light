@@ -63,9 +63,13 @@ SubPattern *activePatterns[] = {
 };
 // clang-format on
 
+uint8_t bloomIndexRange[] = {1, 5};
+uint8_t spiralIndexRange[] = {6, 11};
+
 SubPattern *sourcePattern;
 SubPattern *targetPattern;
 uint8_t numPatterns = sizeof(activePatterns) / sizeof(activePatterns[0]);
+uint8_t activePatternIndex = 0;
 
 void logMemory() {
   Serial.print("Used PSRAM: ");
@@ -141,18 +145,35 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   if (data.action == RED_BUTTON) {
     Serial.print("RED_BUTTON: ");
     Serial.println(data.value);
+    if (data.value == 0) {
+      uint8_t newPatternIndex = activePatternIndex >= bloomIndexRange[0] &&
+                                        activePatternIndex < bloomIndexRange[1]
+                                    ? activePatternIndex + 1
+                                    : bloomIndexRange[0];
+      setActivePattern(newPatternIndex);
+    }
   } else if (data.action == BLUE_BUTTON) {
     Serial.print("BLUE_BUTTON: ");
     Serial.println(data.value);
   } else if (data.action == YELLOW_BUTTON) {
     Serial.print("YELLOW_BUTTON: ");
     Serial.println(data.value);
+    if (data.value == 0) {
+      uint8_t newPatternIndex = activePatternIndex >= spiralIndexRange[0] &&
+                                        activePatternIndex < spiralIndexRange[1]
+                                    ? activePatternIndex + 1
+                                    : spiralIndexRange[0];
+      setActivePattern(newPatternIndex);
+      Serial.print("newPatternIndex: ");
+      Serial.println(newPatternIndex);
+    }
   } else if (data.action == GREEN_BUTTON) {
     Serial.print("GREEN_BUTTON: ");
     Serial.println(data.value);
   } else if (data.action == WHITE_BUTTON) {
     Serial.print("WHITE_BUTTON: ");
     Serial.println(data.value);
+    if (data.value == 0) { setActivePattern(0); }
 
   // Slider actions
   } else if (data.action == SLIDER_1) {
@@ -170,7 +191,23 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   }
 }
 
-void loop() {
+void setActivePattern(uint8_t patternIndex) {
+  activePatterns[activePatternIndex]->setPercentBrightness(0);
+  activePatternIndex = patternIndex;
+  activePatterns[activePatternIndex]->setPercentBrightness(100);
+}
+
+void loopWithButtonBoxControl() {
+  clearLEDs();
+  palette.cycle();
+
+  activePatterns[activePatternIndex]->show();
+
+  FastLED.show();
+  ticks++;
+}
+
+void loopCyclePatternsWithFade() {
   clearLEDs();
   palette.cycle();
 
@@ -197,6 +234,11 @@ void loop() {
 
   FastLED.show();
   ticks++;
+}
+
+void loop() {
+  //loopCyclePatternsWithFade();
+  loopWithButtonBoxControl();
 }
 
 void shiftPercentBrightnessTo(SubPattern *pattern,
