@@ -1,13 +1,13 @@
 ### Button Box Layout
 
 ```
-                     Red button
+                     Red button: Spiral patterns
                     /
-                   /       White button
+                   /       White button: Twinkle pattern
                   /       /
-                 /       /    Slider 3
+                 /       /    Slider 3: Speed
                 /       /    /
-               /       /    /   Slider 4
+               /       /    /   Slider 4: ???
               /       /    /   /
 +------------/-------/----/---/-+
 |           /       /    /   /  |
@@ -19,13 +19,13 @@
 |   \   \   \   \   \           |
 +----\---\---\---\---\----------+
       \   \   \   \   \
-       \   \   \   \   Green button
+       \   \   \   \   Green button: ???
         \   \   \   \
-         \   \   \   Yellow button
+         \   \   \   Yellow button: Strobe?
           \   \   \
-           \   \   Blue button
+           \   \   Blue button: Bloom patterns
             \   \
-             \   Slider 2
+             \   Slider 2: Color
               \
-               Slider 1
+               Slider 1: Brightness
 ```

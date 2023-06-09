@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "fade.h"
 #include "Disc.h"
+#include "Timer.h"
 
 Disc discs[NUM_DISCS];
 CRGB *leds;
@@ -66,10 +67,15 @@ SubPattern *activePatterns[] = {
 uint8_t bloomIndexRange[] = {1, 5};
 uint8_t spiralIndexRange[] = {6, 11};
 
+uint8_t sliderBrightness = 255;
+uint8_t sliderColor = 0;
+uint8_t sliderSpeed = 0;
+
 SubPattern *sourcePattern;
 SubPattern *targetPattern;
 uint8_t numPatterns = sizeof(activePatterns) / sizeof(activePatterns[0]);
 uint8_t activePatternIndex = 0;
+uint8_t strobe = 0;
 
 void logMemory() {
   Serial.print("Used PSRAM: ");
@@ -152,9 +158,10 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
                                     : bloomIndexRange[0];
       setActivePattern(newPatternIndex);
     }
-  } else if (data.action == BLUE_BUTTON) {
-    Serial.print("BLUE_BUTTON: ");
+  } else if (data.action == WHITE_BUTTON) {
+    Serial.print("WHITE_BUTTON: ");
     Serial.println(data.value);
+    if (data.value == 0) { setActivePattern(0); }
   } else if (data.action == YELLOW_BUTTON) {
     Serial.print("YELLOW_BUTTON: ");
     Serial.println(data.value);
@@ -167,21 +174,24 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
       Serial.print("newPatternIndex: ");
       Serial.println(newPatternIndex);
     }
+  } else if (data.action == BLUE_BUTTON) {
+    Serial.print("BLUE_BUTTON: ");
+    Serial.println(data.value);
+    strobe = data.value;
   } else if (data.action == GREEN_BUTTON) {
     Serial.print("GREEN_BUTTON: ");
     Serial.println(data.value);
-  } else if (data.action == WHITE_BUTTON) {
-    Serial.print("WHITE_BUTTON: ");
-    Serial.println(data.value);
-    if (data.value == 0) { setActivePattern(0); }
 
   // Slider actions
   } else if (data.action == SLIDER_1) {
     Serial.print("SLIDER_1: ");
     Serial.println(data.value);
+    sliderBrightness = map(data.value, 1000, 0, 0, 255);
   } else if (data.action == SLIDER_2) {
     Serial.print("SLIDER_2: ");
     Serial.println(data.value);
+    sliderColor = map(data.value, 1000, 0, 0, palette.getNumPalettes());
+    palette.setPalette(sliderColor);
   } else if (data.action == SLIDER_3) {
     Serial.print("SLIDER_3: ");
     Serial.println(data.value);
@@ -201,8 +211,17 @@ void loopWithButtonBoxControl() {
   clearLEDs();
   palette.cycle();
 
-  activePatterns[activePatternIndex]->show();
+  if (strobe == 1) {
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
+        discs[d].leds[p] = CRGB::White;
+      }
+    }
+  } else {
+    activePatterns[activePatternIndex]->show();
+  }
 
+  FastLED.setBrightness(sliderBrightness);
   FastLED.show();
   ticks++;
 }

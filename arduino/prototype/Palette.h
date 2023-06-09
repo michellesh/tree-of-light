@@ -6,6 +6,7 @@ class Palette {
   CRGBPalette16 _targetPalette = *(activePalettes[0]);
   uint8_t _activeColorMode = PATCHY;
   uint8_t _secondsPerPalette = 10;
+  Timer _paletteCycleTimer = {_secondsPerPalette * 1000};
 
   void _setNextColorPalette() {
     const uint8_t numberOfPalettes =
@@ -28,8 +29,21 @@ class Palette {
 
   void setColorMode(uint8_t colorMode) { _activeColorMode = colorMode; }
 
+  uint8_t getNumPalettes() {
+    return sizeof(activePalettes) / sizeof(activePalettes[0]);
+  }
+
+  void setPalette(uint8_t whichPalette) {
+    _currentPalette = *(activePalettes[whichPalette]);
+    _targetPalette = *(activePalettes[whichPalette]);
+    _paletteCycleTimer.reset();
+  }
+
   void cycle() {
-    EVERY_N_SECONDS(_secondsPerPalette) { _setNextColorPalette(); }
+    if (_paletteCycleTimer.complete()) {
+      _setNextColorPalette();
+      _paletteCycleTimer.reset();
+    }
 
     EVERY_N_MILLISECONDS(10) {
       nblendPaletteTowardPalette(_currentPalette, _targetPalette, 12);
