@@ -68,7 +68,6 @@ uint8_t bloomIndexRange[] = {1, 5};
 uint8_t spiralIndexRange[] = {6, 11};
 
 uint8_t sliderBrightness = 255;
-uint8_t sliderColor = 0;
 uint8_t sliderSpeed = 0;
 
 SubPattern *sourcePattern;
@@ -190,8 +189,8 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   } else if (data.action == SLIDER_2) {
     Serial.print("SLIDER_2: ");
     Serial.println(data.value);
-    sliderColor = map(data.value, 1000, 0, 0, palette.getNumPalettes());
-    palette.setPalette(sliderColor);
+    uint8_t paletteIndex = map(data.value, 0, 1000, 0, palette.getNumPalettes() - 1);
+    palette.setPalette(paletteIndex);
   } else if (data.action == SLIDER_3) {
     Serial.print("SLIDER_3: ");
     Serial.println(data.value);
