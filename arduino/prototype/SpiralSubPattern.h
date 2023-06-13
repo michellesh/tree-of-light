@@ -65,6 +65,12 @@ class SpiralSubPattern : public SubPattern {
   }
 
   void _showBasicSpiralRotation() {
+    int16_t offset1 = sawtooth(0, 360, 200);
+    int16_t offset2 = sawtooth(360, 0, 200);
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      _spirals[0].setDiscOffset(d, offset1 + (NUM_DISCS - 1 - d) * 30);
+      _spirals[1].setDiscOffset(d, offset2 + d * 30);
+    }
     _spirals[0].show();
     _spirals[1].show();
   }
@@ -132,13 +138,9 @@ class SpiralSubPattern : public SubPattern {
         _spirals[0] = Spiral(1);
         _spirals[1] = Spiral(2);
         _spirals[0].setRadiusRangePercent(50, 100);
-        _spirals[0].setSpeed(2);
+        _spirals[0].setSpeed(0);
         _spirals[1].setRadiusRangePercent(50, 100);
-        _spirals[1].setSpeed(-2);
-        for (uint8_t d = 0; d < NUM_DISCS; d++) {
-          _spirals[0].setDiscOffset(d, (NUM_DISCS - 1 - d) * 30);
-          _spirals[1].setDiscOffset(d, d * 30);
-        }
+        _spirals[1].setSpeed(0);
         break;
       case CONTINUOUS_SPIRAL:
         _numSpirals = 1;

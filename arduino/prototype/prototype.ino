@@ -68,7 +68,7 @@ uint8_t bloomIndexRange[] = {1, 5};
 uint8_t spiralIndexRange[] = {6, 11};
 
 uint8_t sliderBrightness = 255;
-uint8_t sliderSpeed = 0;
+uint8_t sliderSpeed = 1;
 
 SubPattern *sourcePattern;
 SubPattern *targetPattern;
@@ -194,6 +194,7 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   } else if (data.action == SLIDER_3) {
     Serial.print("SLIDER_3: ");
     Serial.println(data.value);
+    sliderSpeed = map(data.value, 1000, 0, 1, 4);
   } else if (data.action == SLIDER_4) {
     Serial.print("SLIDER_4: ");
     Serial.println(data.value);
@@ -222,7 +223,7 @@ void loopWithButtonBoxControl() {
 
   FastLED.setBrightness(sliderBrightness);
   FastLED.show();
-  ticks++;
+  ticks += sliderSpeed;
 }
 
 void loopCyclePatternsWithFade() {
