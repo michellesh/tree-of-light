@@ -69,6 +69,7 @@ uint8_t spiralIndexRange[] = {6, 11};
 
 uint8_t sliderBrightness = 255;
 uint8_t sliderSpeed = 1;
+uint8_t sliderHue = 0;
 
 SubPattern *sourcePattern;
 SubPattern *targetPattern;
@@ -180,6 +181,7 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   } else if (data.action == GREEN_BUTTON) {
     Serial.print("GREEN_BUTTON: ");
     Serial.println(data.value);
+    strobe = data.value * 2;
 
   // Slider actions
   } else if (data.action == SLIDER_1) {
@@ -189,6 +191,7 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   } else if (data.action == SLIDER_2) {
     Serial.print("SLIDER_2: ");
     Serial.println(data.value);
+    sliderHue = map(data.value, 0, 1000, 0, 255);
     uint8_t paletteIndex = map(data.value, 0, 1000, 0, palette.getNumPalettes() - 1);
     palette.setPalette(paletteIndex);
   } else if (data.action == SLIDER_3) {
@@ -214,7 +217,13 @@ void loopWithButtonBoxControl() {
   if (strobe == 1) {
     for (uint8_t d = 0; d < NUM_DISCS; d++) {
       for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
-        discs[d].leds[p] = CRGB::White;
+        discs[d].leds[p] = CHSV(sliderHue, 255, 255);
+      }
+    }
+  } else if (strobe == 2) {
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      for (uint8_t p = 0; p < discs[d].numLEDs; p++) {
+        discs[d].leds[p] = CHSV(map(d, 0, NUM_DISCS, 0, 255), 255, 255);
       }
     }
   } else {
