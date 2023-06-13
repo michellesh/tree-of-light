@@ -32,7 +32,9 @@ Palette palette;
 #include "SpiralSubPattern.h"
 #include "TwinkleSubPattern.h"
 
-TwinkleSubPattern twinkle;
+TwinkleSubPattern twinkleLow(TwinkleSubPattern::LOW_DENSITY);
+TwinkleSubPattern twinkleMedium(TwinkleSubPattern::MEDIUM_DENSITY);
+TwinkleSubPattern twinkleHigh(TwinkleSubPattern::HIGH_DENSITY);
 
 BloomSubPattern bloomContinuous(BloomSubPattern::CONTINUOUS);
 BloomSubPattern bloomStartSame(BloomSubPattern::START_SAME);
@@ -49,7 +51,9 @@ SpiralSubPattern continuousSpiral(SpiralSubPattern::CONTINUOUS_SPIRAL);
 
 // clang-format off
 SubPattern *activePatterns[] = {
-  &twinkle,
+  &twinkleLow,
+  &twinkleMedium,
+  &twinkleHigh,
   &bloomContinuous,
   &bloomStartSame,
   &bloomEndSame,
@@ -64,8 +68,9 @@ SubPattern *activePatterns[] = {
 };
 // clang-format on
 
-uint8_t bloomIndexRange[] = {1, 5};
-uint8_t spiralIndexRange[] = {6, 11};
+uint8_t twinkleIndexRange[] = {0, 2};
+uint8_t bloomIndexRange[] = {3, 7};
+uint8_t spiralIndexRange[] = {8, 13};
 
 uint8_t sliderBrightness = 255;
 uint8_t sliderSpeed = 1;
@@ -161,7 +166,13 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   } else if (data.action == WHITE_BUTTON) {
     Serial.print("WHITE_BUTTON: ");
     Serial.println(data.value);
-    if (data.value == 0) { setActivePattern(0); }
+    if (data.value == 0) {
+      uint8_t newPatternIndex = activePatternIndex >= twinkleIndexRange[0] &&
+                                        activePatternIndex < twinkleIndexRange[1]
+                                    ? activePatternIndex + 1
+                                    : twinkleIndexRange[0];
+      setActivePattern(newPatternIndex);
+    }
   } else if (data.action == YELLOW_BUTTON) {
     Serial.print("YELLOW_BUTTON: ");
     Serial.println(data.value);

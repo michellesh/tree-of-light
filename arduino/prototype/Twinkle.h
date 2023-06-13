@@ -17,7 +17,7 @@ class Twinkle : public Pattern {
 
  public:
   static constexpr Range SPEED = {1, 8, 4};
-  static constexpr Range DENSITY = {1, 8, 5};
+  static constexpr Range DENSITY = {2, 8, 5};
 
   void setSpeed(uint8_t speed) { _speed = speed; }
 
