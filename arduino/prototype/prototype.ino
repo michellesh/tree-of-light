@@ -75,12 +75,15 @@ uint8_t spiralIndexRange[] = {8, 13};
 uint8_t sliderBrightness = 255;
 uint8_t sliderSpeed = 1;
 uint8_t sliderHue = 0;
+Ripple sliderRipple;
 
 SubPattern *sourcePattern;
 SubPattern *targetPattern;
 uint8_t numPatterns = sizeof(activePatterns) / sizeof(activePatterns[0]);
 uint8_t activePatternIndex = 0;
 uint8_t strobe = 0;
+
+Timer sliderRippleTimer = {4000};
 
 void logMemory() {
   Serial.print("Used PSRAM: ");
@@ -227,6 +230,23 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   } else if (data.action == SLIDER_4) {
     Serial.print("SLIDER_4: ");
     Serial.println(data.value);
+    int16_t maxCumulativeRadius[NUM_DISCS];
+    int16_t cumulativeRadius = 0;
+    for (uint8_t d = 0; d < NUM_DISCS; d++) {
+      cumulativeRadius += discs[d].maxRadius;
+      maxCumulativeRadius[d] = cumulativeRadius;
+    }
+    int16_t sliderRadius = map(data.value, 0, 1000, 0, cumulativeRadius);
+    uint8_t discIndex = 0;
+    for (uint8_t d = 0; d < NUM_DISCS - 1; d++) {
+      if (sliderRadius > maxCumulativeRadius[d] && sliderRadius < maxCumulativeRadius[d + 1]) {
+        discIndex = d + 1;
+      }
+    }
+    sliderRipple.setDiscIndex(discIndex);
+    int16_t prevCumulativeRadius = discIndex == 0 ? 0 : maxCumulativeRadius[discIndex - 1];
+    sliderRipple.setRadius(sliderRadius - prevCumulativeRadius);
+    sliderRippleTimer.reset();
   }
 }
 
@@ -254,6 +274,11 @@ void loopWithButtonBoxControl() {
     }
   } else {
     activePatterns[activePatternIndex]->show();
+  }
+
+  if (!sliderRippleTimer.complete()) {
+    uint8_t percentBrightness = map(millis() - sliderRippleTimer.lastCycleTime, 0, sliderRippleTimer.totalCycleTime, 100, 0);
+    sliderRipple.show(Bloom::WIDTH.DFLT, percentBrightness);
   }
 
   FastLED.setBrightness(sliderBrightness);

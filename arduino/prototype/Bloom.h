@@ -34,6 +34,14 @@ class Ripple {
     _continuous = continuous;
   }
 
+  void setDiscIndex(uint8_t discIndex) {
+    _discIndex = discIndex;
+  }
+
+  void setRadius(int16_t radius) {
+    _radius = min(radius, MAX_RADIUS_DISC[_discIndex]);
+  }
+
   void updateRadius(int16_t speed, int16_t width, uint8_t colorInc) {
     int16_t newRadius = _radius + speed;
     _radius = (newRadius + _maxRadius() + width) % (_maxRadius() + width);
