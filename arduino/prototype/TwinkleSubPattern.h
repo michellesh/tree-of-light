@@ -24,6 +24,10 @@ class TwinkleSubPattern : public SubPattern {
     }
   }
 
+  void setSpeed(uint8_t speed) {
+    _twinkle.setSpeed(speed);
+  }
+
   virtual uint8_t getPercentBrightness() { return _percentBrightness; }
 
   virtual void setPercentBrightness(uint8_t percentBrightness) {

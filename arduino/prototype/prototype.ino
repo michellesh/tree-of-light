@@ -208,7 +208,22 @@ void onDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   } else if (data.action == SLIDER_3) {
     Serial.print("SLIDER_3: ");
     Serial.println(data.value);
+    // affects global `ticks` variable which controls speed of spirals
     sliderSpeed = map(data.value, 1000, 0, 1, 4);
+
+    // set bloom speeds
+    uint8_t bloomSpeed = map(data.value, 1000, 0, Bloom::SPEED.MIN, Bloom::SPEED.MAX);
+    bloomContinuous.setSpeed(bloomSpeed);
+    bloomStartSame.setSpeed(bloomSpeed);
+    bloomEndSame.setSpeed(bloomSpeed);
+    bloomUpward.setSpeed(bloomSpeed);
+    bloomDownward.setSpeed(bloomSpeed);
+
+    // set twinkle speeds
+    uint8_t twinkleSpeed = map(data.value, 1000, 0, Twinkle::SPEED.MIN, Twinkle::SPEED.MAX);
+    twinkleLow.setSpeed(twinkleSpeed);
+    twinkleMedium.setSpeed(twinkleSpeed);
+    twinkleHigh.setSpeed(twinkleSpeed);
   } else if (data.action == SLIDER_4) {
     Serial.print("SLIDER_4: ");
     Serial.println(data.value);

@@ -47,6 +47,12 @@ class BloomSubPattern : public SubPattern {
     }
   }
 
+  void setSpeed(uint8_t speed) {
+    for (uint8_t i = 0; i < _numBlooms; i++) {
+      _blooms[i].setSpeed(speed);
+    }
+  }
+
   virtual uint8_t getPercentBrightness() { return _percentBrightness; }
 
   virtual void setPercentBrightness(uint8_t percentBrightness) {
